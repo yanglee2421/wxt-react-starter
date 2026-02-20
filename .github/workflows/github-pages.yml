@@ -37,10 +37,10 @@ jobs:
           cache: pnpm
       - run: |
           pnpm i
-          pnpm build
+          pnpm -F docs build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: "./docs"
+          path: "./docs/dist"
       - id: deployment
         uses: actions/deploy-pages@v4
