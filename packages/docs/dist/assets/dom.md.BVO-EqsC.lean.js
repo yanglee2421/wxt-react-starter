@@ -1,0 +1,1 @@
+import{_ as e,o as l,c as i,ae as o}from"./chunks/framework.CXxCM6l_.js";const p=JSON.parse('{"title":"DOM","description":"","frontmatter":{},"headers":[],"relativePath":"dom.md","filePath":"dom.md","lastUpdated":null}'),a={name:"dom.md"};function r(n,t,s,d,c,f){return l(),i("div",null,[...t[0]||(t[0]=[o("",5)])])}const m=e(a,[["render",r]]);export{p as __pageData,m as default};

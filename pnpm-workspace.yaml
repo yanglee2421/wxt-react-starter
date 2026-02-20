@@ -1,4 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+
 onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@tsparticles/engine"
+  - esbuild
   - prisma
+  - spawn-sync

@@ -1,9 +1,3 @@
-log.txt
-node_modules/
-.vscode/
-.vitepress/cache/
-docs/
-
 # Logs
 logs
 *.log
@@ -31,10 +25,5 @@ web-ext.config.ts
 *.sln
 *.sw?
 
-.vitepress
-!.vitepress/config.ts
-
-node_modules/
-/assets
-.idea/
-*.log
+packages/docs/.vitepress/cache/**/*
+# !.vitepress/config.ts
