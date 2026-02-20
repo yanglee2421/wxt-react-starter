@@ -1,0 +1,27 @@
+{
+  "include": [".vitepress/**/*.ts"],
+  "compilerOptions": {
+    // Private
+    "types": [],
+    "baseUrl": ".",
+    "paths": { "@/*": ["src/*"] },
+
+    // Initialized by vite
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+
+    // Bundler
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+
+    // Linting
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

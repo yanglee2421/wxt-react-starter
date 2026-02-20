@@ -1,0 +1,17 @@
+{
+  "name": "@yanglee2421/docs",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "vitepress": "^1.6.4"
+  }
+}
