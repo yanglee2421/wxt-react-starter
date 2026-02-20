@@ -4,7 +4,7 @@ const getFullYear = () => new Date().getFullYear();
 
 export default defineConfig({
   // Build
-  base: "/docs/",
+  base: "/yanglee2421/",
   outDir: "dist",
   srcDir: "src",
 
@@ -12,7 +12,10 @@ export default defineConfig({
   lang: "zh-CN",
   title: "DOCS",
   head: [
-    ["link", { rel: "shortcut icon", href: "/docs/symbol-inverted.svg" }],
+    [
+      "link",
+      { rel: "shortcut icon", href: "/yanglee2421/symbol-inverted.svg" },
+    ],
     ["meta", { name: "theme-color", content: "#6366f1" }],
     ["meta", { rel: "description", content: "Yang_Lee的JS开发者文档" }],
   ],
@@ -25,7 +28,7 @@ export default defineConfig({
 
   // Viteperss theme
   themeConfig: {
-    logo: "/symbol-inverted.svg",
+    logo: "/yanglee2421/symbol-inverted.svg",
     siteTitle: "DOCS.IO",
     editLink: {
       pattern: "https://github.com/yanglee2421/docs/blob/main/src/:path",
