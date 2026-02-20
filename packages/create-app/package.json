@@ -1,0 +1,47 @@
+{
+  "name": "@yanglee2421/create-app",
+  "version": "0.0.15",
+  "type": "module",
+  "license": "MIT",
+  "author": "yanglee2421",
+  "description": "create a vite app",
+  "keywords": [
+    "vite"
+  ],
+  "bin": {
+    "create-app": "dist/main.mjs"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "dev": "unbuild --stub",
+    "build": "unbuild",
+    "typecheck": "tsc"
+  },
+  "engines": {
+    "node": "^18.0.0 || >=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/create-app.git",
+    "directory": "/"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/create-app/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/create-app/blob/main/README.md",
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.3",
+    "@types/minimist": "^1.2.3",
+    "@types/node": "^20.5.6",
+    "@types/prompts": "^2.4.4",
+    "cross-spawn": "^7.0.3",
+    "kolorist": "^1.8.0",
+    "minimist": "^1.2.8",
+    "prompts": "^2.4.2",
+    "typescript": "^5.2.2",
+    "unbuild": "^2.0.0"
+  }
+}

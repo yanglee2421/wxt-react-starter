@@ -1,4 +1,4 @@
 onlyBuiltDependencies:
-  - '@tsparticles/engine'
-  - esbuild
-  - spawn-sync
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
