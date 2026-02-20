@@ -5,7 +5,7 @@ import bodyParser from "koa-bodyparser";
 import * as kolorist from "kolorist";
 import Router from "@koa/router";
 import { timeout } from "@/lib/timeout";
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/db";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { toParseForm } from "@/lib/toParseForm";
@@ -113,12 +113,10 @@ upload.post("/save", async (ctx, next) => {
 
 const userRouter = new Router({ prefix: "/user" });
 
-const prisma = new PrismaClient();
-
 userRouter.get("/", async (ctx, next) => {
   await next();
 
-  ctx.body = await prisma.user.findMany();
+  ctx.body = await db.query.users.findMany();
 });
 
 const chat = new Router({ prefix: "/chat" });
@@ -147,7 +145,7 @@ app.use(
     origin(ctx) {
       return ctx.origin.includes("localhost") ? ctx.origin : "*";
     },
-  })
+  }),
 );
 
 app.use(chat.routes());

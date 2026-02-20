@@ -1,4 +1,4 @@
-# Yang_Lee Docs
+# @Yang_Lee
 
 ## create-app
 
@@ -7,19 +7,7 @@
 ![dependencies](https://img.shields.io/badge/dependencies-vite-brightgreen)
 ![developer](https://img.shields.io/badge/developer-YangLee-f39f37)
 
-## Usage
-
-With NPM
-
-```bash
-npm create @yanglee2421/app
-```
-
-With Yarn
-
-```bash
-yarn create @yanglee2421/app
-```
+### Usage
 
 With PNPM
 
@@ -27,169 +15,14 @@ With PNPM
 pnpm create @yanglee2421/app
 ```
 
-## set up
+## Newtab
 
-```bash
-pnpm add -D vitepress vue
-mkdir docs
-cd docs
-# desktop/my-docs/docs
-new-item index.md
-cd ../
-# desktop/my-docs
-pnpm exec vitepress dev docs
-```
-
-## cli
-
-```bash
-vitepress dev docs
-vitepress build docs
-vitepress preview docs
-```
-
-## config
-
-```bash
-# root-dir/docs
-cd .vitepress
-# root-dir/docs/.vitepress
-new-item config.ts
-```
-
-```ts
-// config.ts
-import { defineConfig } from "vitepress";
-export default defineConfig({
-  base: "/docs/",
-  lang: "zh-CN",
-  title: "Yang_Lee",
-  head: [["link", { rel: "shortcut icon", href: "vite.svg" }]],
-  themeConfig: {
-    logo: "vite.svg",
-    siteTitle: "Yang_Lee",
-    socialLinks: [
-      { icon: "github", link: "https://github.com/Swz0321" },
-      { icon: "twitter", link: "..." },
-      // You can also add custom icons by passing SVG as string:
-      {
-        icon: {
-          svg: '<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Dribbble</title><path d="M12...6.38z"/></svg>',
-        },
-        link: "...",
-      },
-    ],
-    nav: [
-      { text: "nav-1", link: "" },
-      {
-        text: "nav-2",
-        items: [
-          { text: "nav-2-1", items: [] },
-          { text: "Item B", link: "/item-2" },
-        ],
-      },
-    ],
-    sidebar: {
-      "/": [
-        {
-          text: "TypeScript",
-          collapsible: true,
-          items: [{ text: "类型", link: "" }],
-        },
-      ],
-      "/data/": [
-        {
-          text: "开始",
-          collapsible: true,
-          items: [
-            {
-              text: "Scss",
-              items: [{ text: "注释", items: [] }],
-            },
-          ],
-        },
-      ],
-    },
-    footer: {
-      message: "Released under the MIT License.",
-      copyright: "Yang_Lee：xtcff082421@gmail.com",
-    },
-  },
-});
-```
-
-## 表情符
-
-:tada:
-:100:
-
-## 卡片
-
-::: tip
-This is a tip
-:::
-
-::: warning
-This is a warning
-:::
-
-::: danger STOP
-Danger zone, do not proceed
-:::
-
-::: details Click me to view the code
-
-```js
-console.log("Hello, VitePress!");
-```
-
-:::
-
-## Badge
-
-### Title <Badge type="info" text="default" />
-
-### Title <Badge type="tip" text="^1.9.0" />
-
-### Title <Badge type="warning" text="beta" />
-
-### Title <Badge type="danger" text="caution" />
-
-## code
-
-::: code-group
-
-```ts [use.ts]
-import {} from "vite"; // [!code --]
-import {} from "vite"; // [!code ++]
-import {} from "vite"; // [!code warning]
-import {} from "vite"; // [!code error]
-import {} from "vite"; // [!code focus]
-import {} from "vite"; // [!code hl]
-```
-
-```ts{1,3-4}
-export const a = "a";
-export { a };
-export default {};
-export function useHook() {}
-```
-
-:::
-
-```yml
-theme: jekyll-theme-slate
-include: [_plugin-vue_export-helper-c27b6911.js]
-```
-
-# Simple Newtab
-
-## Installation
+### Installation
 
 - [microsoft edge](https://microsoftedge.microsoft.com/addons/detail/simple-newtab/pmldkljjfgngoidjkbjjfnipaocgpdkh)
 - [firefox](https://addons.mozilla.org/zh-CN/firefox/addon/simple-newtab/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
 
-## What is next
+### What is next
 
 1. 时间显示增加秒显示
 2. 纯色面板增加一些预置颜色

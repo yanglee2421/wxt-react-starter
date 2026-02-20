@@ -7,12 +7,15 @@
   "scripts": {
     "express": "node --watch ./src/express.ts",
     "koa": "node --watch ./src/koa.ts",
-    "studio": "prisma studio"
+    "studio": "drizzle-kit studio",
+    "generate": "drizzle-kit generate",
+    "dev": "tsx --watch src/dev.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/formidable": "^3.4.6",
@@ -28,16 +31,16 @@
   "dependencies": {
     "@koa/cors": "^5.0.0",
     "@koa/router": "^14.0.0",
-    "@prisma/client": "^6.18.0",
     "axios": "^1.13.0",
+    "better-sqlite3": "^12.6.2",
     "cors": "^2.8.5",
+    "drizzle-orm": "^0.45.1",
     "express": "^5.1.0",
     "formidable": "^3.5.4",
     "koa": "^3.1.1",
     "koa-bodyparser": "^4.4.1",
     "kolorist": "^1.8.0",
     "lodash": "^4.17.21",
-    "prisma": "^6.18.0",
     "ws": "^8.18.3",
     "zod": "^4.1.12"
   }
