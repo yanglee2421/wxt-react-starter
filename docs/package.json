@@ -1,5 +1,6 @@
 {
-  "name": "docs",
+  "name": "@yanglee2421/docs",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",

@@ -1,5 +1,6 @@
 {
   "name": "@yanglee2421/create-app",
+  "private": false,
   "version": "0.0.15",
   "type": "module",
   "license": "MIT",
@@ -25,13 +26,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yanglee2421/create-app.git",
-    "directory": "/"
+    "url": "git+https://github.com/yanglee2421/yanglee2421.git",
+    "directory": "/packages/create-app"
   },
   "bugs": {
-    "url": "https://github.com/yanglee2421/create-app/issues"
+    "url": "https://github.com/yanglee2421/yanglee2421/issues"
   },
-  "homepage": "https://github.com/yanglee2421/create-app/blob/main/README.md",
+  "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
   "devDependencies": {
     "@types/cross-spawn": "^6.0.3",
     "@types/minimist": "^1.2.3",
