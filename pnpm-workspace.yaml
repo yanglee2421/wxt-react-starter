@@ -1,12 +1,11 @@
 packages:
-  - apps/*
   - packages/*
   - docs
 
 onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@tsparticles/engine'
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@tsparticles/engine"
   - better-sqlite3
   - esbuild
   - prisma
