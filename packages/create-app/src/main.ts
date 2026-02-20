@@ -51,10 +51,10 @@ function prompt(): Promise<Answer> {
       },
     ],
     {
-      onCancel(prompt, answers) {
+      onCancel() {
         console.log("cancel");
       },
-    }
+    },
   );
 }
 export interface Answer {
