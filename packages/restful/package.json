@@ -1,35 +1,41 @@
 {
   "name": "@yanglee2421/restful",
-  "private": true,
   "version": "1.0.0",
-  "description": "",
+  "description": "A RESTful API server built with Express and Koa, supporting SQLite database operations using Drizzle ORM.",
+  "keywords": [
+    "restful",
+    "api",
+    "server"
+  ],
+  "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/yanglee2421.git",
+    "directory": "/packages/restful"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/yanglee2421/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
+  "private": true,
   "type": "module",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
   "scripts": {
-    "express": "node --watch ./src/express.ts",
-    "koa": "node --watch ./src/koa.ts",
+    "express": "node --watch ./scripts/express.ts",
+    "koa": "node --watch ./scripts/koa.ts",
     "studio": "drizzle-kit studio",
     "generate": "drizzle-kit generate",
-    "dev": "tsx --watch src/dev.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.5",
-    "@types/formidable": "^3.4.6",
-    "@types/koa": "^3.0.1",
-    "@types/koa-bodyparser": "^4.3.13",
-    "@types/koa__cors": "^5.0.1",
-    "@types/koa__router": "^12.0.5",
-    "@types/lodash": "^4.17.20",
-    "@types/ws": "^8.18.1",
-    "drizzle-kit": "^0.31.9"
+    "dev": "tsx --watch scripts/dev.ts"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",
     "@koa/router": "^14.0.0",
+    "@yanglee2421/create-app": "workspace:^",
     "axios": "^1.13.0",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.5",
@@ -42,5 +48,18 @@
     "lodash": "^4.17.21",
     "ws": "^8.18.3",
     "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/formidable": "^3.4.6",
+    "@types/koa": "^3.0.1",
+    "@types/koa-bodyparser": "^4.3.13",
+    "@types/koa__cors": "^5.0.1",
+    "@types/koa__router": "^12.0.5",
+    "@types/lodash": "^4.17.20",
+    "@types/ws": "^8.18.1",
+    "drizzle-kit": "^0.31.9"
   }
 }

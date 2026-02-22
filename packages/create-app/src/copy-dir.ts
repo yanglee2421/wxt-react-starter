@@ -9,40 +9,50 @@ import {
   mkdir,
 } from "node:fs/promises";
 
-export async function copyDir(params: CopyDirParams) {
-  // ** Params
-  const { input, output } = params;
-
+const ensureDir = async (dir: string) => {
   // Output must can be accessed
   try {
-    await access(output, constants.R_OK);
+    await access(dir, constants.R_OK);
   } catch {
-    await mkdir(output);
+    await mkdir(dir, { recursive: true });
+    return;
   }
 
+  const dirState = await stat(dir);
+
+  if (!dirState.isDirectory()) {
+    throw new Error(`Output path ${dir} is not a directory.`);
+  }
+};
+
+export const copyDir = async (source: string, destination: string) => {
+  const inputState = await stat(source);
+
+  if (!inputState.isDirectory()) {
+    throw new Error(`Input path ${source} is not a file or directory.`);
+  }
+
+  await ensureDir(destination);
+
   // List Directory Contents
-  const list = await readdir(input);
-  for (const item of list) {
-    const neoInput = resolve(input, item);
-    const neoOutput = resolve(output, item);
+  const basenames = await readdir(source);
 
-    const states = await stat(neoInput);
-    const isDir = states.isDirectory();
+  // Loop for Each Item
+  for (const basename of basenames) {
+    const subSource = resolve(source, basename);
+    const subDestination = resolve(destination, basename);
 
-    // Is Directoy
-    if (isDir) {
-      await copyDir({
-        input: neoInput,
-        output: neoOutput,
-      });
+    const states = await stat(subSource);
+
+    // Is Directory
+    if (states.isDirectory()) {
+      await copyDir(subSource, subDestination);
       continue;
     }
 
     // Is File
-    await copyFile(neoInput, neoOutput);
+    if (states.isFile()) {
+      await copyFile(subSource, subDestination, constants.COPYFILE_EXCL);
+    }
   }
-}
-interface CopyDirParams {
-  input: string;
-  output: string;
-}
+};

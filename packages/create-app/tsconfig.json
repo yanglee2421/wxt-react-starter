@@ -23,5 +23,5 @@
 
     "types": ["node"]
   },
-  "include": ["./src/**/*.ts", "./build.config.ts"]
+  "include": ["./src/**/*.ts", "./tsdown.config.ts"]
 }

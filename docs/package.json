@@ -1,10 +1,27 @@
 {
   "name": "@yanglee2421/docs",
-  "private": true,
   "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
   "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/yanglee2421.git",
+    "directory": "/docs"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/yanglee2421/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",

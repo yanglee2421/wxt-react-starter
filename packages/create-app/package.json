@@ -1,29 +1,10 @@
 {
   "name": "@yanglee2421/create-app",
-  "private": false,
-  "version": "0.0.15",
-  "type": "module",
+  "version": "0.1.0",
+  "description": "create a vite app",
+  "keywords": [],
   "license": "MIT",
   "author": "yanglee2421",
-  "description": "create a vite app",
-  "keywords": [
-    "vite"
-  ],
-  "bin": {
-    "create-app": "dist/main.mjs"
-  },
-  "files": [
-    "dist",
-    "templates"
-  ],
-  "scripts": {
-    "dev": "unbuild --stub",
-    "build": "unbuild",
-    "typecheck": "tsc"
-  },
-  "engines": {
-    "node": "^22.0.0 || >=24.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yanglee2421/yanglee2421.git",
@@ -33,14 +14,31 @@
     "url": "https://github.com/yanglee2421/yanglee2421/issues"
   },
   "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
+  "bin": {
+    "create-app": "dist/index.mjs"
+  },
+  "engines": {
+    "node": "^20.0.0 || >=22.0.0"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown"
+  },
   "devDependencies": {
+    "@clack/prompts": "^1.0.1",
     "@types/cross-spawn": "^6.0.3",
-    "@types/minimist": "^1.2.3",
-    "@types/prompts": "^2.4.4",
     "cross-spawn": "^7.0.3",
-    "kolorist": "^1.8.0",
-    "minimist": "^1.2.8",
-    "prompts": "^2.4.2",
-    "unbuild": "^2.0.0"
+    "mri": "^1.2.0",
+    "tsdown": "^0.20.3"
   }
 }

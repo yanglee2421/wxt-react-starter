@@ -1,11 +1,25 @@
 {
   "name": "yanglee2421",
-  "private": true,
   "version": "0.0.0",
   "description": "Monorepo for npm namespace @yanglee2421",
-  "keywords": [],
-  "author": "Yang_Lee",
+  "keywords": [
+    "pnpm",
+    "monorepo",
+    "npm"
+  ],
   "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/yanglee2421.git",
+    "directory": "/"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/yanglee2421/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
+  "private": true,
+  "type": "module",
   "packageManager": "pnpm@10.30.1+sha512.3590e550d5384caa39bd5c7c739f72270234b2f6059e13018f975c313b1eb9fefcc09714048765d4d9efe961382c312e624572c0420762bdc5d5940cdf9be73a",
   "devDependencies": {
     "@eslint/js": "^9.39.2",

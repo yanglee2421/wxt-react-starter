@@ -11,7 +11,7 @@ import express, { Router } from "express";
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { WebSocket, WebSocketServer } from "ws";
 import { timeout } from "@/lib/timeout";
-import { hmisRouter, PORT } from "@/hmis";
+import { hmisRouter, PORT } from "./hmis";
 
 function errorHandler(): ErrorRequestHandler {
   return async (err, req, res, next) => {
@@ -37,7 +37,7 @@ function middLog(): RequestHandler {
     await writeFile(
       resolve(process.cwd(), "./dev.log"),
       `${new Date().toLocaleString()} ${req.path} ${req.method}\n`,
-      { encoding: "utf-8", flag: "a" }
+      { encoding: "utf-8", flag: "a" },
     );
 
     next();
@@ -47,7 +47,7 @@ function middLog(): RequestHandler {
 function corsHandle() {
   return cors((req, callback) => {
     const origin = ["http://localhost", "http://127.0.0.1"].includes(
-      req.headers.origin || ""
+      req.headers.origin || "",
     );
     callback(null, { origin });
   });
@@ -55,7 +55,7 @@ function corsHandle() {
 
 function toGzip(buffer: InputType) {
   return new Promise<Buffer>((res, rej) =>
-    gzip(buffer, (err, compressed) => (err ? rej(err) : res(compressed)))
+    gzip(buffer, (err, compressed) => (err ? rej(err) : res(compressed))),
   );
 }
 
@@ -146,7 +146,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   "/public",
   gzipHandle(),
-  express.static(resolve(process.cwd(), "./public"))
+  express.static(resolve(process.cwd(), "./public")),
 );
 
 app.use(hmisRouter);
