@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import mri from "mri";
 import spawn from "cross-spawn";
-export { copyDir } from "./copy-dir";
+export * from "./fs";
 
 type Argv = {
   template?: string;
