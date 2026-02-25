@@ -180,6 +180,9 @@ const StyledImg = styled("img")({
   insetBlockStart: "50%",
   zIndex: 0,
 
+  minInlineSize: "100%",
+  minBlockSize: "100%",
+
   translate: "-50% -50% -10px",
 
   userSelect: "none",
