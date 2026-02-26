@@ -1,17 +1,15 @@
 #! pnpm tsx
 
 import { createServer } from "node:http";
-import { resolve, dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve, join } from "node:path";
 import { writeFile, readFile, appendFile } from "node:fs/promises";
 import { gzip } from "node:zlib";
 import type { InputType } from "node:zlib";
 import cors from "cors";
-import express, { Router } from "express";
+import express from "express";
 import type { RequestHandler, ErrorRequestHandler } from "express";
 import { WebSocket, WebSocketServer } from "ws";
-import { timeout } from "@/lib/timeout";
-import { hmisRouter, PORT } from "./hmis";
+import { hmisRouter, PORT } from "./routers/hmis";
 
 function errorHandler(): ErrorRequestHandler {
   return async (err, req, res, next) => {
@@ -84,58 +82,6 @@ function gzipHandle(): RequestHandler {
     }
   };
 }
-
-const file = Router();
-const routerStream = Router();
-
-function toPublicFile(fileName: string) {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  return resolve(__dirname, `../../public/${fileName}`);
-}
-
-file.get("/pdf/:way", (req, res) => {
-  const { way } = req.params;
-  const filePath = toPublicFile("demo.pdf");
-
-  switch (way) {
-    case "download":
-      return res.download(filePath);
-    case "view":
-      res.setHeader("Content-Type", "application/pdf");
-      return res.sendFile(filePath);
-    default:
-      return res.status(500).send("Invalid Way");
-  }
-});
-
-file.get("/image/:way", (req, res) => {
-  const { way } = req.params;
-  const filePath = toPublicFile("/img/bg.jpg");
-
-  switch (way) {
-    case "download":
-      return res.download(filePath);
-    case "view":
-      res.setHeader("Content-Type", "image/jpeg");
-      return res.sendFile(filePath);
-    default:
-      return res.status(500).send("Invalid Way");
-  }
-});
-
-routerStream.get("/stream", async (req, res) => {
-  void req;
-
-  res.setHeader("Content-type", "application/octet-stream");
-
-  const text = "为什么电脑永远不会生病？因为它有Windows（窗户）可以通风。";
-  for (const chunk of text) {
-    await timeout(1000);
-    res.write(chunk);
-  }
-
-  return res.end();
-});
 
 const app = express();
 
