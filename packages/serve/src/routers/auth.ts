@@ -5,6 +5,7 @@ import { jwtInstance } from "@/lib/node/jwt";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import * as sql from "drizzle-orm";
+import { calculateErrorMessage } from "@/middleware/error";
 
 export const authRouter = Router();
 
@@ -69,11 +70,8 @@ authRouter.post("/logout", (req, res) => {
   try {
     jwtInstance.verifyAccessJwt(token);
   } catch (error) {
-    let message = "Invalid token";
-
-    // if (error instanceof jwtInstance.TokenExpiredError) {
-    //   message = "Token expired";
-    // }
+    const message = calculateErrorMessage(error, "Invalid token");
+    // "jwt expired"
 
     return res.status(401).json({ message });
   }
@@ -191,11 +189,8 @@ authRouter.get("/me", async (req, res) => {
   try {
     decoded = jwtInstance.verifyAccessJwt(token) as schema.User;
   } catch (error) {
-    let message = "Invalid token";
+    const message = calculateErrorMessage(error, "Invalid token");
 
-    // if (error instanceof jwtInstance.TokenExpiredError) {
-    //   message = "Token expired";
-    // }
     return res.status(401).json({ message });
   }
 

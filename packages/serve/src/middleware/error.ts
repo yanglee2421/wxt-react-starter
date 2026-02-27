@@ -27,7 +27,7 @@ const mapGroupBy = <TElement, TKey>(
   return resultMap;
 };
 
-const calculateErrorMessage = (
+export const calculateErrorMessage = (
   err: unknown,
   fallback = "An error occurred",
 ): string => {
