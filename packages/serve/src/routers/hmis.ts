@@ -56,8 +56,7 @@ hmisRouter.get("/api/getData", (req, res) => {
   // ?type=csbts&param=91022070168
   const url = new URL(req.url, `http://${req.hostname}:${PORT}`);
   console.log(url.href);
-  const type = url.searchParams.get("type");
-  if (type !== "csbts") throw new Error("type field error");
+
   const param = url.searchParams.get("param");
   if (!param) throw new Error("param is falsy");
   const [barCode, unitCode] = param.split(",");

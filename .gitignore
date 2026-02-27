@@ -28,5 +28,5 @@ web-ext.config.ts
 dist
 # !.vitepress/config.ts
 docs/.vitepress/cache/**/*
-packages/restful/src/db/migrations/**/*
-packages/restful/src/db/data.db
+packages/serve/src/db/migrations/**/*
+packages/serve/src/db/data.db

@@ -1,5 +1,5 @@
 {
-  "name": "@yanglee2421/restful",
+  "name": "@yanglee2421/serve",
   "version": "1.0.0",
   "description": "A RESTful API server built with Express, supporting SQLite database operations using Drizzle ORM.",
   "keywords": [
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yanglee2421/yanglee2421.git",
-    "directory": "/packages/restful"
+    "directory": "/packages/serve"
   },
   "bugs": {
     "url": "https://github.com/yanglee2421/yanglee2421/issues"
