@@ -10,6 +10,7 @@ import { errorHandler } from "./middleware/error";
 import { corsHandle } from "./middleware/cors";
 import { gzipHandle } from "./middleware/gzip";
 import { authRouter } from "./routers/auth";
+import { bingRouter } from "./routers/bing";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(
   express.static(path.resolve(process.cwd(), "./public")),
 );
 app.use("/api/auth", authRouter);
+app.use("/bing", bingRouter);
 app.use(hmisRouter);
 app.use(errorHandler());
 
