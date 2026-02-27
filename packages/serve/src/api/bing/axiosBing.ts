@@ -1,15 +1,92 @@
 import axios from "axios";
+import type { AxiosError, AxiosInstance } from "axios";
+
+let at = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ4eHhAcXEuY29tIiwibmFtZSI6bnVsbCwiY3JlYXRlZEF0IjpudWxsLCJ1cGRhdGVkQXQiOiIyMDI2LTAyLTI3VDAzOjA2OjAzLjAwMFoiLCJpYXQiOjE3NzIxNjE1NjMsImV4cCI6MTc3MjE2MjQ2M30.BgcVtuBTv67yVGlyPuq-Uv9cj4L_0xL-cKg7QyXZVMo`;
+let rt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6bnVsbCwiZW1haWwiOiJ4eHhAcXEuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkZkprcjJFUmV0eGxGT2p6LzJuUTNydU9JV25IbHdhdzNZbDNFZ21kNUIvaUxGYWtYc0sxbjIiLCJjcmVhdGVkQXQiOm51bGwsInVwZGF0ZWRBdCI6IjIwMjYtMDItMjdUMDM6MDY6MDMuMDAwWiIsImlhdCI6MTc3MjE4MjU0MCwiZXhwIjoxNzcyNzg3MzQwfQ.41WP2k-VediulmsCTGYGoNcPxlOGb360CZc-H5w7ARY`;
+
+class AuthToken {
+  #accessToken: string;
+  #refreshToken: string;
+
+  constructor(accessToken: string, refreshToken: string) {
+    this.#accessToken = accessToken;
+    this.#refreshToken = refreshToken;
+  }
+
+  getAccessToken() {
+    return this.#accessToken;
+  }
+  getRefreshToken() {
+    return this.#refreshToken;
+  }
+  setAccessToken(accessToken: string) {
+    this.#accessToken = accessToken;
+  }
+  setRefreshToken(refreshToken: string) {
+    this.#refreshToken = refreshToken;
+  }
+  async refreshTokens(axiosBing: AxiosInstance, err: AxiosError) {
+    const res = await axiosBing.request({
+      ...err.config,
+      url: "http://localhost:3000/api/auth/refresh",
+      headers: {
+        ...err.config?.headers,
+        Authorization: `Bearer ${authToken.getRefreshToken()}`,
+      },
+    });
+
+    const { accessToken, refreshToken } = res.data;
+    this.setAccessToken(accessToken);
+    this.setRefreshToken(refreshToken);
+  }
+}
+
+class RetryCounter {
+  #retryCount = 0;
+  #maxRetryCount: number;
+
+  constructor(maxRetryCount: number) {
+    this.#maxRetryCount = maxRetryCount;
+  }
+
+  getRetryCount() {
+    return this.#retryCount;
+  }
+  incrementRetryCount() {
+    if (this.#retryCount >= this.#maxRetryCount) {
+      throw new Error("Failed to refresh tokens after maximum retries.");
+    }
+
+    this.#retryCount++;
+  }
+  resetRetryCount() {
+    this.#retryCount = 0;
+  }
+}
 
 export const axiosBing = axios.create({
   baseURL: "https://cn.bing.com",
   timeout: 1000 * 30,
 });
 
-let at = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ4eHhAcXEuY29tIiwibmFtZSI6bnVsbCwiY3JlYXRlZEF0IjpudWxsLCJ1cGRhdGVkQXQiOiIyMDI2LTAyLTI3VDAzOjA2OjAzLjAwMFoiLCJpYXQiOjE3NzIxNjE1NjMsImV4cCI6MTc3MjE2MjQ2M30.BgcVtuBTv67yVGlyPuq-Uv9cj4L_0xL-cKg7QyXZVMo`;
-let rt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6bnVsbCwiZW1haWwiOiJ4eHhAcXEuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkZkprcjJFUmV0eGxGT2p6LzJuUTNydU9JV25IbHdhdzNZbDNFZ21kNUIvaUxGYWtYc0sxbjIiLCJjcmVhdGVkQXQiOm51bGwsInVwZGF0ZWRBdCI6IjIwMjYtMDItMjdUMDM6MDY6MDMuMDAwWiIsImlhdCI6MTc3MjE4MjU0MCwiZXhwIjoxNzcyNzg3MzQwfQ.41WP2k-VediulmsCTGYGoNcPxlOGb360CZc-H5w7ARY`;
+const retryCounter = new RetryCounter(3);
+const authToken = new AuthToken(at, rt);
+
+const logout = async () => {
+  await axiosBing.request({
+    url: "http://localhost:3000/api/auth/logout",
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${authToken.getRefreshToken()}`,
+    },
+  });
+};
 
 axiosBing.interceptors.request.use((config) => {
-  config.headers.setAuthorization(`Bearer ${at}`, false);
+  config.headers.setAuthorization(
+    `Bearer ${authToken.getAccessToken()}`,
+    false,
+  );
 
   return config;
 });
@@ -20,36 +97,41 @@ axiosBing.interceptors.response.use(
       throw err;
     }
 
+    const status = err.status;
     const message = err.response?.data?.message;
+    const authorizationHeader = err.config?.headers?.Authorization;
+
+    if (status !== 401) {
+      throw err;
+    }
 
     if (message !== "jwt expired") {
       throw err;
     }
 
-    if (!err.config) {
+    /**
+     * If Refresh Token is also expired,
+     * then throw error to client,
+     * and let client to handle it (e.g. redirect to login page).
+     * Avoid infinite loop of refreshing tokens.
+     */
+    if (authorizationHeader === `Bearer ${authToken.getRefreshToken()}`) {
+      await logout();
       throw err;
     }
 
-    const res = await axiosBing.post(
-      "http://localhost:3000/api/auth/refresh",
-      null,
-      {
-        ...err.config,
-        headers: {
-          ...err.config.headers,
-          Authorization: `Bearer ${rt}`,
-        },
-      },
-    );
+    await authToken.refreshTokens(axiosBing, err);
 
-    at = res.data.accessToken;
-    rt = res.data.refreshToken;
-    return axiosBing.request({
+    retryCounter.incrementRetryCount();
+    const result = await axiosBing.request({
       ...err.config,
       headers: {
-        ...err.config.headers,
-        Authorization: `Bearer ${at}`,
+        ...err.config?.headers,
+        Authorization: `Bearer ${authToken.getAccessToken()}`,
       },
     });
+    retryCounter.resetRetryCount();
+
+    return result;
   },
 );
