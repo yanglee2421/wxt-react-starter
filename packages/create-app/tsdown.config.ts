@@ -13,6 +13,17 @@ const calcualteJSExtension = (format: string) => {
   }
 };
 
+const calcualteDTSExtension = (format: string) => {
+  switch (format) {
+    case "es":
+      return ".d.mts";
+    case "cjs":
+      return ".d.cts";
+    default:
+      return ".d.ts";
+  }
+};
+
 export default defineConfig(() => {
   const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -31,7 +42,7 @@ export default defineConfig(() => {
     outExtensions: ({ format }) => {
       return {
         js: calcualteJSExtension(format),
-        dts: ".d.ts",
+        dts: calcualteDTSExtension(format),
       };
     },
     clean: true,

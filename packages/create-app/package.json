@@ -20,7 +20,10 @@
   ],
   "type": "module",
   "exports": {
-    "types": "./dist/index.d.ts",
+    "types": {
+      "default": "./dist/index.d.mts",
+      "require": "./dist/index.d.cts"
+    },
     "import": "./dist/index.mjs",
     "require": "./dist/index.cjs"
   },
