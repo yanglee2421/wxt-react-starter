@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { URL } from "node:url";
 
+const PORT = 3000;
 export const hmisRouter = Router();
-export const PORT = 8080;
 
 type KhGetBody = {
   mesureId: "A23051641563052";

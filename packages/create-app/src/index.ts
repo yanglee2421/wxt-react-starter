@@ -22,4 +22,4 @@ export const main = async () => {
   console.log(argv, childProcess);
 };
 
-main();
+// main();

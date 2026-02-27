@@ -7,7 +7,7 @@ import * as schema from "./schema";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const sqliteDatabase = new Database(path.resolve(__dirname, "./data.db"));
-export const db = drizzle(sqliteDatabase, { schema });
+export const db = drizzle({ schema, client: sqliteDatabase });
 
 export const runMigrations = () => {
   migrate(db, {

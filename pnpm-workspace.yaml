@@ -3,9 +3,10 @@ packages:
   - docs
 
 onlyBuiltDependencies:
-  - "@prisma/client"
-  - "@prisma/engines"
-  - "@tsparticles/engine"
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@tsparticles/engine'
+  - bcrypt
   - better-sqlite3
   - esbuild
   - prisma
