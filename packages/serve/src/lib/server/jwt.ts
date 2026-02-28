@@ -10,21 +10,19 @@ type JwtConstructorOptions = {
   algorithm?: jwt.Algorithm;
 };
 
-type RefreshPayload = z.infer<typeof refreshPayloadSchema>;
-type AccessPayload = z.infer<typeof accessPayloadSchema>;
-
-const refreshPayloadSchema = z.object({
-  userId: z.number(),
-  sessionId: z.number(),
-});
-
-const accessPayloadSchema = z
-  .object({
-    userId: z.number(),
-  })
-  .loose();
+type RefreshPayload = z.infer<typeof JWTHelper.refreshPayloadSchema>;
+type AccessPayload = z.infer<typeof JWTHelper.accessPayloadSchema>;
 
 export class JWTHelper {
+  static refreshPayloadSchema = z.object({
+    userId: z.number(),
+    sessionId: z.number(),
+  });
+
+  static accessPayloadSchema = z.looseObject({
+    userId: z.number(),
+  });
+
   #ACCESS_TOKEN_SECRET: string;
   #REFRESH_TOKEN_SECRET: string;
   #accessExpiresIn: jwt.SignOptions["expiresIn"];
@@ -64,7 +62,7 @@ export class JWTHelper {
       this.getVerifyOptions(),
     );
 
-    return accessPayloadSchema.parse(payload);
+    return JWTHelper.accessPayloadSchema.parse(payload);
   }
   verifyRefreshJwt(token: string) {
     const payload = jwt.verify(
@@ -73,7 +71,7 @@ export class JWTHelper {
       this.getVerifyOptions(),
     );
 
-    return refreshPayloadSchema.parse(payload);
+    return JWTHelper.refreshPayloadSchema.parse(payload);
   }
 
   // Shared Logic
@@ -92,17 +90,17 @@ export class JWTHelper {
   decode(token: string) {
     const payload = jwt.decode(token);
 
-    return accessPayloadSchema.parse(payload);
+    return JWTHelper.accessPayloadSchema.parse(payload);
   }
 
   // Error Handling
-  isExpiredError(error: unknown) {
+  static isExpiredError(error: unknown) {
     return error instanceof jwt.TokenExpiredError;
   }
-  isJsonWebTokenError(error: unknown) {
+  static isJsonWebTokenError(error: unknown) {
     return error instanceof jwt.JsonWebTokenError;
   }
-  isNotBeforeError(error: unknown) {
+  static isNotBeforeError(error: unknown) {
     return error instanceof jwt.NotBeforeError;
   }
 
@@ -125,5 +123,3 @@ export class JWTHelper {
     return token;
   }
 }
-
-export const jwtHelper = new JWTHelper();

@@ -1,6 +1,6 @@
 import z from "zod";
 import { mapGroupBy } from "../polyfill";
-import { jwtHelper } from "./jwt";
+import { JWTHelper } from "./jwt";
 
 export class HttpError extends Error {
   statusCode: number;
@@ -23,12 +23,12 @@ export class NotFoundError extends HttpError {
   }
 }
 
-class ErrorHelper {
-  calculateErrorMessage(
+export class ErrorHelper {
+  static calculateErrorMessage(
     error: unknown,
     defaultMessage: string = "An error occurred",
   ) {
-    if (jwtHelper.isExpiredError(error)) {
+    if (JWTHelper.isExpiredError(error)) {
       return "ACCESS_TOKEN_EXPIRED";
     }
 
@@ -57,20 +57,23 @@ class ErrorHelper {
     return defaultMessage;
   }
 
-  calculateErrorStatusCode(error: unknown, defaultStatusCode: number = 500) {
-    if (jwtHelper.isExpiredError(error)) {
+  static calculateErrorStatusCode(
+    error: unknown,
+    defaultStatusCode: number = 500,
+  ) {
+    if (JWTHelper.isExpiredError(error)) {
       return 401;
     }
 
-    if (jwtHelper.isNotBeforeError(error)) {
+    if (JWTHelper.isNotBeforeError(error)) {
       return 401;
     }
 
-    if (jwtHelper.isJsonWebTokenError(error)) {
+    if (JWTHelper.isJsonWebTokenError(error)) {
       return 401;
     }
 
-    if (error instanceof HttpError) {
+    if (ErrorHelper.isHttpError(error)) {
       return error.statusCode;
     }
 
@@ -78,12 +81,22 @@ class ErrorHelper {
       return 422;
     }
 
-    if (error instanceof Error) {
-      return typeof error.cause === "number" ? error.cause : 500;
+    if (!ErrorHelper.isError(error)) {
+      return defaultStatusCode;
+    }
+
+    if (typeof error.cause === "number") {
+      return error.cause;
     }
 
     return defaultStatusCode;
   }
-}
 
-export const errorHelper = new ErrorHelper();
+  static isHttpError(error: unknown): error is HttpError {
+    return error instanceof HttpError;
+  }
+
+  static isError(error: unknown): error is Error {
+    return error instanceof Error;
+  }
+}

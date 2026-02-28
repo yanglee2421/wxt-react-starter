@@ -6,12 +6,16 @@ import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import * as schema from "./schema";
 import { relations } from "./relations";
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-const sqliteDatabase = new Database(path.resolve(__dirname, "./data.db"));
-export const db = drizzle({ schema, client: sqliteDatabase, relations });
+export type DB = ReturnType<typeof createDB>;
 
-export const runMigrations = () => {
+export const createDB = () => {
+  const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+  const sqliteDatabase = new Database(path.resolve(__dirname, "./data.db"));
+  const db = drizzle({ schema, client: sqliteDatabase, relations });
+
   migrate(db, {
     migrationsFolder: path.resolve(__dirname, "./migrations"),
   });
+
+  return db;
 };

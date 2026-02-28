@@ -31,7 +31,7 @@ class AuthToken {
       url: "http://localhost:3000/api/auth/refresh",
       headers: {
         ...err.config?.headers,
-        Authorization: `Bearer ${authToken.getRefreshToken()}`,
+        Authorization: `Bearer ${this.getRefreshToken()}`,
       },
     });
 
@@ -64,74 +64,78 @@ class RetryCounter {
   }
 }
 
-export const axiosBing = axios.create({
-  baseURL: "https://cn.bing.com",
-  timeout: 1000 * 30,
-});
-
-const retryCounter = new RetryCounter(3);
-const authToken = new AuthToken(at, rt);
-
-const logout = async () => {
-  await axiosBing.request({
-    url: "http://localhost:3000/api/auth/logout",
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${authToken.getRefreshToken()}`,
-    },
+export const createAxiosBing = () => {
+  const axiosBing = axios.create({
+    baseURL: "https://cn.bing.com",
+    timeout: 1000 * 30,
   });
-};
 
-axiosBing.interceptors.request.use((config) => {
-  config.headers.setAuthorization(
-    `Bearer ${authToken.getAccessToken()}`,
-    false,
-  );
+  const retryCounter = new RetryCounter(3);
+  const authToken = new AuthToken(at, rt);
 
-  return config;
-});
-axiosBing.interceptors.response.use(
-  (res) => res,
-  async (err) => {
-    if (!axios.isAxiosError(err)) {
-      throw err;
-    }
-
-    const status = err.status;
-    const message = err.response?.data?.message;
-    const authorizationHeader = err.config?.headers?.Authorization;
-
-    if (status !== 401) {
-      throw err;
-    }
-
-    if (message !== "ACCESS_TOKEN_EXPIRED") {
-      throw err;
-    }
-
-    /**
-     * If Refresh Token is also expired,
-     * then throw error to client,
-     * and let client to handle it (e.g. redirect to login page).
-     * Avoid infinite loop of refreshing tokens.
-     */
-    if (authorizationHeader === `Bearer ${authToken.getRefreshToken()}`) {
-      await logout();
-      throw err;
-    }
-
-    await authToken.refreshTokens(axiosBing, err);
-
-    retryCounter.incrementRetryCount();
-    const result = await axiosBing.request({
-      ...err.config,
+  const logout = async () => {
+    await axiosBing.request({
+      url: "http://localhost:3000/api/auth/logout",
+      method: "POST",
       headers: {
-        ...err.config?.headers,
-        Authorization: `Bearer ${authToken.getAccessToken()}`,
+        Authorization: `Bearer ${authToken.getRefreshToken()}`,
       },
     });
-    retryCounter.resetRetryCount();
+  };
 
-    return result;
-  },
-);
+  axiosBing.interceptors.request.use((config) => {
+    config.headers.setAuthorization(
+      `Bearer ${authToken.getAccessToken()}`,
+      false,
+    );
+
+    return config;
+  });
+  axiosBing.interceptors.response.use(
+    (res) => res,
+    async (err) => {
+      if (!axios.isAxiosError(err)) {
+        throw err;
+      }
+
+      const status = err.status;
+      const message = err.response?.data?.message;
+      const authorizationHeader = err.config?.headers?.Authorization;
+
+      if (status !== 401) {
+        throw err;
+      }
+
+      if (message !== "ACCESS_TOKEN_EXPIRED") {
+        throw err;
+      }
+
+      /**
+       * If Refresh Token is also expired,
+       * then throw error to client,
+       * and let client to handle it (e.g. redirect to login page).
+       * Avoid infinite loop of refreshing tokens.
+       */
+      if (authorizationHeader === `Bearer ${authToken.getRefreshToken()}`) {
+        await logout();
+        throw err;
+      }
+
+      await authToken.refreshTokens(axiosBing, err);
+
+      retryCounter.incrementRetryCount();
+      const result = await axiosBing.request({
+        ...err.config,
+        headers: {
+          ...err.config?.headers,
+          Authorization: `Bearer ${authToken.getAccessToken()}`,
+        },
+      });
+      retryCounter.resetRetryCount();
+
+      return result;
+    },
+  );
+
+  return axiosBing;
+};

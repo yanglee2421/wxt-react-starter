@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-class Hash {
+export class Hash {
   #rounds: number;
 
   constructor(rounds: number) {
@@ -18,5 +18,3 @@ class Hash {
     return result;
   }
 }
-
-export const hash = new Hash(10);

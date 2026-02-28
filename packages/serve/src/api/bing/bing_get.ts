@@ -1,7 +1,6 @@
-import { axiosBing } from "./axiosBing";
-import type { AxiosRequestConfig } from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
 
-export function bing_get(req: Req) {
+export function bing_get(axiosBing: AxiosInstance, req: Req) {
   return axiosBing<unknown, Res>({
     url: "/HPImageArchive.aspx",
     ...req,

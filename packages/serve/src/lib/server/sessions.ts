@@ -1,28 +1,37 @@
-import { db } from "@/db";
 import * as schema from "@/db/schema";
 import * as sql from "drizzle-orm";
-import { jwtHelper, JWTHelper } from "@/lib/server/jwt";
+import { JWTHelper } from "@/lib/server/jwt";
 import { NotFoundError } from "./error";
+import type { DB } from "@/db";
 
-class SessionDBHelper {
+export class SessionDBHelper {
+  #db: DB;
+
+  constructor(db: DB) {
+    this.#db = db;
+  }
+
   create(userId: number, expiresAt: Date) {
-    return db.insert(schema.sessions).values({ userId, expiresAt }).returning();
+    return this.#db
+      .insert(schema.sessions)
+      .values({ userId, expiresAt })
+      .returning();
   }
   delete(sessionId: number) {
-    return db
+    return this.#db
       .delete(schema.sessions)
       .where(sql.eq(schema.sessions.id, sessionId))
       .returning();
   }
   update(sessionId: number, expiresAt: Date) {
-    return db
+    return this.#db
       .update(schema.sessions)
       .set({ expiresAt })
       .where(sql.eq(schema.sessions.id, sessionId))
       .returning();
   }
   read(sessionId: number) {
-    return db
+    return this.#db
       .select()
       .from(schema.sessions)
       .where(sql.eq(schema.sessions.id, sessionId))
@@ -30,7 +39,7 @@ class SessionDBHelper {
   }
 
   clearExpired() {
-    return db
+    return this.#db
       .delete(schema.sessions)
       .where(sql.lt(schema.sessions.expiresAt, new Date()))
       .returning();
@@ -55,7 +64,7 @@ class SessionDBHelper {
   }
 }
 
-class Sessions {
+export class Sessions {
   #expiresIn: number;
   #dbHelper: SessionDBHelper;
   #jwtHelper: JWTHelper;
@@ -114,11 +123,3 @@ class Sessions {
     return session;
   }
 }
-
-const sessionDBHelper = new SessionDBHelper();
-export const sessions = new Sessions(
-  // expiresIn: 24 hours
-  1000 * 60 * 60 * 24 * 7,
-  sessionDBHelper,
-  jwtHelper,
-);
