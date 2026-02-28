@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { Router } from "express";
-import { hash } from "@/lib/node/hash";
-import { jwtInstance } from "@/lib/node/jwt";
+import { hash } from "@/lib/server/hash";
+import { jwtHelper } from "@/lib/server/jwt";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import * as sql from "drizzle-orm";
-import { calculateErrorMessage } from "@/middleware/error";
+import { sessions } from "@/lib/server/sessions";
+import { HttpError } from "@/lib/server/error";
 
 export const authRouter = Router();
 
@@ -40,8 +41,8 @@ authRouter.post("/login", async (req, res) => {
     return res.status(422).json({ message: "Invalid email or password" });
   }
 
-  const accessToken = jwtInstance.signAccessJwt(user);
-  const refreshToken = jwtInstance.signRefreshJwt(user);
+  const accessToken = jwtHelper.signAccessJwt({ userId: user.id });
+  const refreshToken = await sessions.open(user.id);
 
   return res.json({
     message: "Login successful",
@@ -54,29 +55,14 @@ authRouter.post("/login", async (req, res) => {
   });
 });
 
-authRouter.post("/logout", (req, res) => {
+authRouter.post("/logout", async (req, res) => {
   const authHeader = req.headers.authorization;
+  const token = jwtHelper.authorizationHeaderToToken(authHeader);
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "Authorization header missing" });
-  }
+  jwtHelper.verifyAccessJwt(token);
+  await sessions.close(token);
 
-  const token = authHeader.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "Token missing" });
-  }
-
-  try {
-    jwtInstance.verifyAccessJwt(token);
-  } catch (error) {
-    const message = calculateErrorMessage(error, "Invalid token");
-    // "jwt expired"
-
-    return res.status(401).json({ message });
-  }
-
-  res.json({ message: "Logout successful" });
+  return res.json({ message: "Logout successful" });
 });
 
 authRouter.post("/signup", async (req, res) => {
@@ -95,11 +81,7 @@ authRouter.post("/signup", async (req, res) => {
     .limit(1);
 
   if (existingUser) {
-    return res.status(422).json({ message: "Email already exists" });
-  }
-
-  if (typeof password !== "string") {
-    return res.status(422).json({ message: "Invalid password" });
+    throw new HttpError("Email already exists", 422);
   }
 
   const hashPassword = await hash.hashPassword(password);
@@ -115,8 +97,8 @@ authRouter.post("/signup", async (req, res) => {
       updatedAt: schema.users.updatedAt,
     });
 
-  const accessToken = jwtInstance.signAccessJwt(newUser);
-  const refreshToken = jwtInstance.signRefreshJwt(newUser);
+  const accessToken = jwtHelper.signAccessJwt({ userId: newUser.id });
+  const refreshToken = await sessions.open(newUser.id);
 
   return res.json({
     message: "Signup successful",
@@ -128,71 +110,23 @@ authRouter.post("/signup", async (req, res) => {
 
 authRouter.post("/refresh", async (req, res) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ message: "Authorization header missing" });
-  }
+  const token = jwtHelper.authorizationHeaderToToken(authHeader);
+  const session = await sessions.verify(token);
+  const accessToken = jwtHelper.signAccessJwt({ userId: session.userId });
+  const refreshToken = await sessions.open(session.userId);
 
-  const token = authHeader.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Token missing" });
-  }
-
-  let decoded: null | schema.User = null;
-
-  try {
-    decoded = jwtInstance.verifyRefreshJwt(token) as schema.User;
-  } catch (error) {
-    let message = "Invalid token";
-    // if (error instanceof jwtInstance.TokenExpiredError) {
-    //   message = "Token expired";
-    // }
-    return res.status(401).json({ message });
-  }
-
-  const [user] = await db
-    .select({
-      id: schema.users.id,
-      email: schema.users.email,
-      name: schema.users.name,
-      createdAt: schema.users.createdAt,
-      updatedAt: schema.users.updatedAt,
-    })
-    .from(schema.users)
-    .where(sql.eq(schema.users.id, decoded.id))
-    .limit(1);
-
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  const accessToken = jwtInstance.signAccessJwt(user);
-  const refreshToken = jwtInstance.signRefreshJwt(user);
-
-  res.json({ message: "Token refreshed", accessToken, refreshToken, user });
+  return res.json({
+    message: "Token refreshed",
+    accessToken,
+    refreshToken,
+    userId: session.userId,
+  });
 });
 
 authRouter.get("/me", async (req, res) => {
   const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    return res.status(401).json({ message: "Authorization header missing" });
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "Token missing" });
-  }
-
-  let decoded: null | schema.User = null;
-
-  try {
-    decoded = jwtInstance.verifyAccessJwt(token) as schema.User;
-  } catch (error) {
-    const message = calculateErrorMessage(error, "Invalid token");
-
-    return res.status(401).json({ message });
-  }
+  const token = jwtHelper.authorizationHeaderToToken(authHeader);
+  const decoded = jwtHelper.verifyAccessJwt(token);
 
   const [user] = await db
     .select({
@@ -203,7 +137,7 @@ authRouter.get("/me", async (req, res) => {
       updatedAt: schema.users.updatedAt,
     })
     .from(schema.users)
-    .where(sql.eq(schema.users.id, decoded.id))
+    .where(sql.eq(schema.users.id, decoded.userId))
     .limit(1);
 
   if (!user) {

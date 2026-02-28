@@ -1,8 +1,8 @@
 import axios from "axios";
 import type { AxiosError, AxiosInstance } from "axios";
 
-let at = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ4eHhAcXEuY29tIiwibmFtZSI6bnVsbCwiY3JlYXRlZEF0IjpudWxsLCJ1cGRhdGVkQXQiOiIyMDI2LTAyLTI3VDAzOjA2OjAzLjAwMFoiLCJpYXQiOjE3NzIxNjE1NjMsImV4cCI6MTc3MjE2MjQ2M30.BgcVtuBTv67yVGlyPuq-Uv9cj4L_0xL-cKg7QyXZVMo`;
-let rt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6bnVsbCwiZW1haWwiOiJ4eHhAcXEuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkZkprcjJFUmV0eGxGT2p6LzJuUTNydU9JV25IbHdhdzNZbDNFZ21kNUIvaUxGYWtYc0sxbjIiLCJjcmVhdGVkQXQiOm51bGwsInVwZGF0ZWRBdCI6IjIwMjYtMDItMjdUMDM6MDY6MDMuMDAwWiIsImlhdCI6MTc3MjE4MjU0MCwiZXhwIjoxNzcyNzg3MzQwfQ.41WP2k-VediulmsCTGYGoNcPxlOGb360CZc-H5w7ARY`;
+let at = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc3MjI2MjA5MCwiZXhwIjoxNzcyMjYyOTkwfQ.vGu2IsXJC4-7Z9E61Fv8eSvD1zXXhyn1EmvLRdNtGWk`;
+let rt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInNlc3Npb25JZCI6MSwiaWF0IjoxNzcyMjYyMDkwLCJleHAiOjE3NzI4NjY4OTB9.wzY0zNlAkEiN9S-BNuQ5BMkntvmfKIfBODC-6WO9ax0`;
 
 class AuthToken {
   #accessToken: string;
@@ -105,7 +105,7 @@ axiosBing.interceptors.response.use(
       throw err;
     }
 
-    if (message !== "jwt expired") {
+    if (message !== "ACCESS_TOKEN_EXPIRED") {
       throw err;
     }
 
