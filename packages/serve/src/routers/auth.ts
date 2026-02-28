@@ -113,7 +113,7 @@ authRouter.post("/refresh", async (req, res) => {
   const token = jwtHelper.authorizationHeaderToToken(authHeader);
   const session = await sessions.verify(token);
   const accessToken = jwtHelper.signAccessJwt({ userId: session.userId });
-  const refreshToken = await sessions.open(session.userId);
+  const refreshToken = await sessions.update(token);
 
   return res.json({
     message: "Token refreshed",
