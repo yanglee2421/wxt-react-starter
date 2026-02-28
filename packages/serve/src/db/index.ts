@@ -13,9 +13,11 @@ export const createDB = () => {
   const sqliteDatabase = new Database(path.resolve(__dirname, "./data.db"));
   const db = drizzle({ schema, client: sqliteDatabase, relations });
 
-  migrate(db, {
-    migrationsFolder: path.resolve(__dirname, "./migrations"),
-  });
+  if (process.env.NODE_ENV === "production") {
+    migrate(db, {
+      migrationsFolder: path.resolve(__dirname, "./migrations"),
+    });
+  }
 
   return db;
 };

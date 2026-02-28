@@ -4,7 +4,7 @@
   "description": "A RESTful API server built with Express, supporting SQLite database operations using Drizzle ORM.",
   "keywords": [
     "express",
-    "api",
+    "restapi",
     "server"
   ],
   "license": "MIT",
@@ -30,6 +30,7 @@
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
     "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
