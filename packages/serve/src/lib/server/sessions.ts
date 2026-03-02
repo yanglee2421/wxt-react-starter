@@ -1,8 +1,8 @@
-import * as schema from "@/db/schema";
-import * as sql from "drizzle-orm";
-import { JWTHelper } from "@/lib/server/jwt";
-import { NotFoundError } from "./error";
 import type { DB } from "@/db";
+import * as schema from "@/db/schema";
+import { JWTHelper } from "@/lib/server/jwt";
+import { atFirstOrThrow } from "@yotulee/run";
+import * as sql from "drizzle-orm";
 
 export class SessionDBHelper {
   #db: DB;
@@ -52,16 +52,6 @@ export class SessionDBHelper {
 
     return new Date(session.expiresAt).getTime() < Date.now();
   }
-
-  atOneOrThrow<TElement>(elements: TElement[]): TElement {
-    const [element] = elements;
-
-    if (!element) {
-      throw new NotFoundError("Element not found.");
-    }
-
-    return element;
-  }
 }
 
 export class Sessions {
@@ -82,7 +72,7 @@ export class Sessions {
   async open(userId: number) {
     const expiresAt = new Date(Date.now() + this.#expiresIn);
     const sessions = await this.#dbHelper.create(userId, expiresAt);
-    const session = this.#dbHelper.atOneOrThrow(sessions);
+    const session = atFirstOrThrow(sessions);
     const refreshToken = this.#jwtHelper.signRefreshJwt({
       userId,
       sessionId: session.id,
@@ -99,7 +89,7 @@ export class Sessions {
     const { sessionId } = this.#jwtHelper.verifyRefreshJwt(token);
     const expiresAt = new Date(Date.now() + this.#expiresIn);
     const sessions = await this.#dbHelper.update(sessionId, expiresAt);
-    const session = this.#dbHelper.atOneOrThrow(sessions);
+    const session = atFirstOrThrow(sessions);
 
     return this.#jwtHelper.signRefreshJwt({
       userId: session.userId,
@@ -113,7 +103,7 @@ export class Sessions {
 
     const { sessionId } = this.#jwtHelper.verifyRefreshJwt(token);
     const sessions = await this.#dbHelper.read(sessionId);
-    const session = this.#dbHelper.atOneOrThrow(sessions);
+    const session = atFirstOrThrow(sessions);
 
     if (this.#dbHelper.isExpired(session)) {
       await this.#dbHelper.delete(sessionId);

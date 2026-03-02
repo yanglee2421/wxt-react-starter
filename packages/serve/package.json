@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@yanglee2421/create-app": "workspace:^",
-    "@yotulee/run": "jsr:^0.0.11",
+    "@yotulee/run": "jsr:^0.0.12",
     "axios": "^1.13.0",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.6.2",
