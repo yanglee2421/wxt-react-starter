@@ -177,6 +177,9 @@ importers:
       '@yanglee2421/create-app':
         specifier: workspace:^
         version: link:../create-app
+      '@yotulee/run':
+        specifier: jsr:^0.0.11
+        version: '@jsr/yotulee__run@0.0.11'
       axios:
         specifier: ^1.13.0
         version: 1.13.5
@@ -1181,6 +1184,9 @@ packages:
   '@js-temporal/polyfill@0.5.1':
     resolution: {integrity: sha512-hloP58zRVCRSpgDxmqCWJNlizAlUgJFqG2ypq79DCvyv9tHjRYMDOcPFjzfl/A1/YxDvRCZz8wvZvmapQnKwFQ==}
     engines: {node: '>=12'}
+
+  '@jsr/yotulee__run@0.0.11':
+    resolution: {integrity: sha512-otzO5Fk8gVaO/Q3j3CzsG/I5QXPbkUFHP/BjfhKsr6jCOVbczeUmvCegrWHRIUxxeBMMTQFAARe0+9mYo5nqpA==, tarball: https://npm.jsr.io/~/11/@jsr/yotulee__run/0.0.11.tgz}
 
   '@mui/core-downloads-tracker@7.3.8':
     resolution: {integrity: sha512-s9UHZo7QJVly7gNArEZkbbsimHqJZhElgBpXIJdehZ4OWXt+CCr0SBDgUCDJnQrqpd1dWK2dLq5rmO4mCBmI3w==}
@@ -5880,6 +5886,8 @@ snapshots:
   '@js-temporal/polyfill@0.5.1':
     dependencies:
       jsbi: 4.3.2
+
+  '@jsr/yotulee__run@0.0.11': {}
 
   '@mui/core-downloads-tracker@7.3.8': {}
 

@@ -4,14 +4,6 @@ interface Node {
   children?: Node[];
 }
 
-export const clamp = (num: number, min: number, max: number) => {
-  return Math.min(Math.max(num, min), max);
-};
-
-export const isClamped = (num: number, min: number, max: number) => {
-  return Object.is(num, clamp(num, min, max));
-};
-
 export const listToTree = (list: Node[]) => {
   const nodes = list.map<Node & { children: Node[] }>((el) => ({
     ...el,
