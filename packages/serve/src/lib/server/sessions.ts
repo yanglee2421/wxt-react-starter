@@ -1,10 +1,10 @@
 import type { DB } from "@/db";
 import * as schema from "@/db/schema";
-import { JWTHelper } from "@/lib/server/jwt";
+import { JWTService } from "@/lib/server/jwt";
 import { atFirstOrThrow } from "@yotulee/run";
 import * as sql from "drizzle-orm";
 
-export class SessionDBHelper {
+export class SessionDatabaseService {
   #db: DB;
 
   constructor(db: DB) {
@@ -54,26 +54,26 @@ export class SessionDBHelper {
   }
 }
 
-export class Sessions {
+export class SessionService {
   #expiresIn: number;
-  #dbHelper: SessionDBHelper;
-  #jwtHelper: JWTHelper;
+  #databse: SessionDatabaseService;
+  #jwt: JWTService;
 
   constructor(
     expiresIn: number,
-    dbHelper: SessionDBHelper,
-    jwtHelper: JWTHelper,
+    databse: SessionDatabaseService,
+    jwt: JWTService,
   ) {
     this.#expiresIn = expiresIn;
-    this.#dbHelper = dbHelper;
-    this.#jwtHelper = jwtHelper;
+    this.#databse = databse;
+    this.#jwt = jwt;
   }
 
   async open(userId: number) {
     const expiresAt = new Date(Date.now() + this.#expiresIn);
-    const sessions = await this.#dbHelper.create(userId, expiresAt);
+    const sessions = await this.#databse.create(userId, expiresAt);
     const session = atFirstOrThrow(sessions);
-    const refreshToken = this.#jwtHelper.signRefreshJwt({
+    const refreshToken = this.#jwt.signRefreshJwt({
       userId,
       sessionId: session.id,
     });
@@ -81,32 +81,32 @@ export class Sessions {
     return refreshToken;
   }
   close(token: string) {
-    const { sessionId } = this.#jwtHelper.verifyRefreshJwt(token);
+    const { sessionId } = this.#jwt.verifyRefreshJwt(token);
 
-    return this.#dbHelper.delete(sessionId);
+    return this.#databse.delete(sessionId);
   }
   async update(token: string) {
-    const { sessionId } = this.#jwtHelper.verifyRefreshJwt(token);
+    const { sessionId } = this.#jwt.verifyRefreshJwt(token);
     const expiresAt = new Date(Date.now() + this.#expiresIn);
-    const sessions = await this.#dbHelper.update(sessionId, expiresAt);
+    const sessions = await this.#databse.update(sessionId, expiresAt);
     const session = atFirstOrThrow(sessions);
 
-    return this.#jwtHelper.signRefreshJwt({
+    return this.#jwt.signRefreshJwt({
       userId: session.userId,
       sessionId: session.id,
     });
   }
   async verify(token: string) {
     if (Math.random() < 0.01) {
-      await this.#dbHelper.clearExpired();
+      await this.#databse.clearExpired();
     }
 
-    const { sessionId } = this.#jwtHelper.verifyRefreshJwt(token);
-    const sessions = await this.#dbHelper.read(sessionId);
+    const { sessionId } = this.#jwt.verifyRefreshJwt(token);
+    const sessions = await this.#databse.read(sessionId);
     const session = atFirstOrThrow(sessions);
 
-    if (this.#dbHelper.isExpired(session)) {
-      await this.#dbHelper.delete(sessionId);
+    if (this.#databse.isExpired(session)) {
+      await this.#databse.delete(sessionId);
       throw new Error("Session expired.");
     }
 

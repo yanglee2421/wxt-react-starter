@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-export class Hash {
+export class HashService {
   #rounds: number;
 
   constructor(rounds: number) {

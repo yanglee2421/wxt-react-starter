@@ -1,37 +1,37 @@
 #! pnpm tsx
 
+import { createDatabase } from "@/db";
+import express from "express";
 import http from "node:http";
 import path from "node:path";
-import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
-import { logHandle } from "./middleware/log";
+import { createBingAxios } from "./api/bing/axiosBing";
+import { HashService } from "./lib/server/hash";
+import { JWTService } from "./lib/server/jwt";
+import { SessionDatabaseService, SessionService } from "./lib/server/sessions";
 import { corsHandle } from "./middleware/cors";
-import { gzipHandle } from "./middleware/gzip";
 import { errorHandler } from "./middleware/error";
+import { gzipHandle } from "./middleware/gzip";
+import { logHandle } from "./middleware/log";
 import { createAuthRouter } from "./routers/auth";
 import { createBingRouter } from "./routers/bing";
 import { createHMISRouter } from "./routers/hmis";
-import { createDB } from "@/db";
-import { Hash } from "./lib/server/hash";
-import { JWTHelper } from "./lib/server/jwt";
-import { Sessions, SessionDBHelper } from "./lib/server/sessions";
-import { createAxiosBing } from "./api/bing/axiosBing";
 
 const main = async () => {
   const PORT = 3000;
   const app = express();
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server });
-  const db = createDB();
-  const axiosBing = createAxiosBing();
-  const hash = new Hash(10);
-  const jwtHelper = new JWTHelper();
-  const sessionDBHelper = new SessionDBHelper(db);
-  const sessions = new Sessions(
+  const db = createDatabase();
+  const bingAxios = createBingAxios();
+  const hashService = new HashService(10);
+  const jwtService = new JWTService();
+  const sessionDBService = new SessionDatabaseService(db);
+  const sessionService = new SessionService(
     // expiresIn: 24 hours
     1000 * 60 * 60 * 24 * 7,
-    sessionDBHelper,
-    jwtHelper,
+    sessionDBService,
+    jwtService,
   );
 
   app.use(corsHandle());
@@ -43,8 +43,11 @@ const main = async () => {
     gzipHandle(),
     express.static(path.resolve(process.cwd(), "./public")),
   );
-  app.use("/api/auth", createAuthRouter(db, hash, jwtHelper, sessions));
-  app.use("/bing", createBingRouter(axiosBing));
+  app.use(
+    "/api/auth",
+    createAuthRouter(db, hashService, jwtService, sessionService),
+  );
+  app.use("/bing", createBingRouter(bingAxios));
   app.use(createHMISRouter(PORT));
   app.use(errorHandler());
 

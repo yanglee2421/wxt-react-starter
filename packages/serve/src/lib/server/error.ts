@@ -1,6 +1,6 @@
 import { mapGroupBy } from "@yotulee/run";
 import z from "zod";
-import { JWTHelper } from "./jwt";
+import { JWTService } from "./jwt";
 
 export class HttpError extends Error {
   statusCode: number;
@@ -23,12 +23,12 @@ export class NotFoundError extends HttpError {
   }
 }
 
-export class ErrorHelper {
+export class ErrorService {
   static calculateErrorMessage(
     error: unknown,
     defaultMessage: string = "An error occurred",
   ) {
-    if (JWTHelper.isExpiredError(error)) {
+    if (JWTService.isExpiredError(error)) {
       return "ACCESS_TOKEN_EXPIRED";
     }
 
@@ -61,19 +61,19 @@ export class ErrorHelper {
     error: unknown,
     defaultStatusCode: number = 500,
   ) {
-    if (JWTHelper.isExpiredError(error)) {
+    if (JWTService.isExpiredError(error)) {
       return 401;
     }
 
-    if (JWTHelper.isNotBeforeError(error)) {
+    if (JWTService.isNotBeforeError(error)) {
       return 401;
     }
 
-    if (JWTHelper.isJsonWebTokenError(error)) {
+    if (JWTService.isJsonWebTokenError(error)) {
       return 401;
     }
 
-    if (ErrorHelper.isHttpError(error)) {
+    if (ErrorService.isHttpError(error)) {
       return error.statusCode;
     }
 
@@ -81,7 +81,7 @@ export class ErrorHelper {
       return 422;
     }
 
-    if (!ErrorHelper.isError(error)) {
+    if (!ErrorService.isError(error)) {
       return defaultStatusCode;
     }
 

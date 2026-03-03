@@ -1,5 +1,5 @@
-import z from "zod";
 import jwt from "jsonwebtoken";
+import z from "zod";
 import { UnauthorizedError } from "./error";
 
 type JwtConstructorOptions = {
@@ -10,10 +10,10 @@ type JwtConstructorOptions = {
   algorithm?: jwt.Algorithm;
 };
 
-type RefreshPayload = z.infer<typeof JWTHelper.refreshPayloadSchema>;
-type AccessPayload = z.infer<typeof JWTHelper.accessPayloadSchema>;
+type RefreshPayload = z.infer<typeof JWTService.refreshPayloadSchema>;
+type AccessPayload = z.infer<typeof JWTService.accessPayloadSchema>;
 
-export class JWTHelper {
+export class JWTService {
   static refreshPayloadSchema = z.object({
     userId: z.number(),
     sessionId: z.number(),
@@ -62,7 +62,7 @@ export class JWTHelper {
       this.getVerifyOptions(),
     );
 
-    return JWTHelper.accessPayloadSchema.parse(payload);
+    return JWTService.accessPayloadSchema.parse(payload);
   }
   verifyRefreshJwt(token: string) {
     const payload = jwt.verify(
@@ -71,7 +71,7 @@ export class JWTHelper {
       this.getVerifyOptions(),
     );
 
-    return JWTHelper.refreshPayloadSchema.parse(payload);
+    return JWTService.refreshPayloadSchema.parse(payload);
   }
 
   // Shared Logic
@@ -90,7 +90,7 @@ export class JWTHelper {
   decode(token: string) {
     const payload = jwt.decode(token);
 
-    return JWTHelper.accessPayloadSchema.parse(payload);
+    return JWTService.accessPayloadSchema.parse(payload);
   }
 
   // Error Handling

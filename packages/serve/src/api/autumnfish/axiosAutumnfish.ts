@@ -1,7 +1,7 @@
-import axios from "axios";
 import type { AxiosError } from "axios";
+import axios from "axios";
 
-export const createAxiosAutumnfish = () => {
+export const createAutumnfishAxios = () => {
   const axiosAutumnfish = axios.create({
     baseURL: "https://autumnfish.cn",
     timeout: 1000 * 30,

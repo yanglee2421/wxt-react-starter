@@ -1,4 +1,4 @@
-export function toFileFromDataURL(params: toFileFromDataURLParams) {
+export function createFileFromDataURL(params: toFileFromDataURLParams) {
   // ** Params
   const { dataURL, filename } = params;
 

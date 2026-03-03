@@ -1,9 +1,9 @@
 import { fileURLToPath } from "node:url";
 import {
-  Worker,
   isMainThread,
-  workerData,
   parentPort,
+  Worker,
+  workerData,
 } from "node:worker_threads";
 
 export function workerThreader() {
@@ -33,5 +33,3 @@ export function workerThreader() {
     parentPort?.postMessage({ msg: "hello parent" });
   }, 1000);
 }
-
-workerThreader();

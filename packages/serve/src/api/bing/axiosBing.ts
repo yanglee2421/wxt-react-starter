@@ -1,5 +1,4 @@
-import axios from "axios";
-import type { AxiosError, AxiosInstance } from "axios";
+import axios, { type AxiosError, type AxiosInstance } from "axios";
 
 let at = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc3MjI2MjA5MCwiZXhwIjoxNzcyMjYyOTkwfQ.vGu2IsXJC4-7Z9E61Fv8eSvD1zXXhyn1EmvLRdNtGWk`;
 let rt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInNlc3Npb25JZCI6MSwiaWF0IjoxNzcyMjYyMDkwLCJleHAiOjE3NzI4NjY4OTB9.wzY0zNlAkEiN9S-BNuQ5BMkntvmfKIfBODC-6WO9ax0`;
@@ -64,7 +63,7 @@ class RetryCounter {
   }
 }
 
-export const createAxiosBing = () => {
+export const createBingAxios = () => {
   const axiosBing = axios.create({
     baseURL: "https://cn.bing.com",
     timeout: 1000 * 30,
@@ -98,7 +97,7 @@ export const createAxiosBing = () => {
         throw err;
       }
 
-      const status = err.status;
+      const status = err.response?.status;
       const message = err.response?.data?.message;
       const authorizationHeader = err.config?.headers?.Authorization;
 
