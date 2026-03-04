@@ -1,0 +1,34 @@
+{
+  "name": "@yanglee2421/broker",
+  "version": "0.0.0",
+  "description": "A WebSocket message broker that facilitates real-time communication between clients and servers.",
+  "keywords": [
+    "websocket",
+    "message broker",
+    "real-time communication"
+  ],
+  "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/yanglee2421.git",
+    "directory": "/"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/yanglee2421/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts"
+  },
+  "dependencies": {
+    "@yanglee2421/db": "workspace:*",
+    "aedes": "^1.0.0",
+    "aedes-persistence-redis": "^11.2.2",
+    "drizzle-orm": "1.0.0-beta.15-859cf75",
+    "ioredis": "^5.10.0",
+    "mqemitter-redis": "^7.2.0"
+  }
+}

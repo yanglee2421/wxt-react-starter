@@ -1,18 +1,17 @@
-import { z } from "zod";
-import { Router } from "express";
-import * as schema from "@/db/schema";
-import * as sql from "drizzle-orm";
 import { HttpError } from "@/lib/server/error";
-import type { DB } from "@/db";
-import type { Hash } from "@/lib/server/hash";
-import type { JWTHelper } from "@/lib/server/jwt";
-import type { Sessions } from "@/lib/server/sessions";
+import type { HashService } from "@/lib/server/hash";
+import type { JWTService } from "@/lib/server/jwt";
+import type { SessionService } from "@/lib/server/sessions";
+import { type DB, schema } from "@yanglee2421/db";
+import * as sql from "drizzle-orm";
+import { Router } from "express";
+import { z } from "zod";
 
 export const createAuthRouter = (
   db: DB,
-  hash: Hash,
-  jwtHelper: JWTHelper,
-  sessions: Sessions,
+  hash: HashService,
+  jwtHelper: JWTService,
+  sessions: SessionService,
 ) => {
   const authRouter = Router();
 

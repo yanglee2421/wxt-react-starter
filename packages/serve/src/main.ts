@@ -1,6 +1,6 @@
 #! pnpm tsx
 
-import { createDatabase } from "@/db";
+import { createDatabase } from "@yanglee2421/db";
 import express from "express";
 import http from "node:http";
 import path from "node:path";
@@ -69,7 +69,7 @@ const main = async () => {
   });
 
   server.listen(PORT, () => {
-    console.info("standing by", PORT);
+    console.info("> standing by", PORT);
   });
 };
 

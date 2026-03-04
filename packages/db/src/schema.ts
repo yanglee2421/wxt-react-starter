@@ -8,7 +8,9 @@ export const users = sqliteTable("users", {
   name: text("name"),
   email: text("email"),
   password: text("password"),
-  createdAt: integer("createdAt", { mode: "timestamp" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).$default(
+    () => new Date(),
+  ),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).$onUpdate(
     () => new Date(),
   ),
@@ -20,7 +22,9 @@ export const sessions = sqliteTable(
     id: integer("id").primaryKey({ autoIncrement: true }),
     userId: integer("userId").notNull(),
     expiresAt: integer("expiresAt", { mode: "timestamp" }),
-    createdAt: integer("createdAt", { mode: "timestamp" }),
+    createdAt: integer("createdAt", { mode: "timestamp" }).$default(
+      () => new Date(),
+    ),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).$onUpdate(
       () => new Date(),
     ),

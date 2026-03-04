@@ -21,3 +21,5 @@ export const createDatabase = () => {
 
   return db;
 };
+
+export { schema };

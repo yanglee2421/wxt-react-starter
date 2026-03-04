@@ -1,6 +1,5 @@
-import type { DB } from "@/db";
-import * as schema from "@/db/schema";
 import { JWTService } from "@/lib/server/jwt";
+import { type DB, schema } from "@yanglee2421/db";
 import { atFirstOrThrow } from "@yotulee/run";
 import * as sql from "drizzle-orm";
 
@@ -45,7 +44,7 @@ export class SessionDatabaseService {
       .returning();
   }
 
-  isExpired(session: schema.Session) {
+  isExpired(session: typeof schema.sessions.$inferSelect) {
     if (session.expiresAt === null) {
       return false;
     }
