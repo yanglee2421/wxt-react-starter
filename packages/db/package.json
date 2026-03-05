@@ -20,11 +20,26 @@
   "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
   "private": false,
   "files": [
-    "src"
+    "dist",
+    "drizzle"
   ],
   "type": "module",
   "exports": {
-    "import": "./src/index.ts"
+    "types": {
+      "import": "./dist/index.d.mts",
+      "require": "./dist/index.d.cts"
+    },
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "db:push": "drizzle-kit push",
+    "db:pull": "drizzle-kit pull",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "better-sqlite3": "^12.6.2",
@@ -32,6 +47,11 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
-    "drizzle-kit": "1.0.0-beta.15-859cf75"
+    "drizzle-kit": "1.0.0-beta.15-859cf75",
+    "tsdown": "^0.20.3"
+  },
+  "peerDependencies": {
+    "better-sqlite3": "^12.6.2",
+    "drizzle-orm": "1.0.0-beta.15-859cf75"
   }
 }

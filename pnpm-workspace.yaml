@@ -9,5 +9,6 @@ onlyBuiltDependencies:
   - bcrypt
   - better-sqlite3
   - esbuild
+  - msgpackr-extract
   - prisma
   - spawn-sync

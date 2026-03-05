@@ -4,6 +4,7 @@ import { createDatabase } from "@yanglee2421/db";
 import express from "express";
 import http from "node:http";
 import path from "node:path";
+import url from "node:url";
 import { WebSocket, WebSocketServer } from "ws";
 import { createBingAxios } from "./api/bing/axiosBing";
 import { HashService } from "./lib/server/hash";
@@ -22,7 +23,12 @@ const main = async () => {
   const app = express();
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server });
-  const db = createDatabase();
+  const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+  const databasePath = path.resolve(__dirname, "../data.db");
+  const db = createDatabase({
+    databasePath,
+    runMigrate: true,
+  });
   const bingAxios = createBingAxios();
   const hashService = new HashService(10);
   const jwtService = new JWTService();
