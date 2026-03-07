@@ -1,94 +1,92 @@
-import { createDatabase, schema, type DB } from "@yanglee2421/db";
+import { createDatabase, schema } from "@yanglee2421/db";
 import { Aedes } from "aedes";
 import createRedisPersistence from "aedes-persistence-redis";
+import { Worker } from "bullmq";
 import { Redis } from "ioredis";
 import createRedisMq from "mqemitter-redis";
 import { createServer } from "node:net";
 
-class MessageListener {
-  #isRunning = false;
-  #redis: Redis;
-  #db: DB;
-
-  constructor(redis: Redis, db: DB) {
-    this.#redis = redis;
-    this.#db = db;
-  }
-
-  async start() {
-    if (this.#isRunning) return;
-
-    this.#isRunning = true;
-
-    while (this.#isRunning) {
-      const data = await this.#redis.brpop("mqtt_messages", 0);
-      console.log("redis brpop", data);
-      try {
-        const result = await this.#db.select().from(schema.users);
-        console.log(result);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-  stop() {
-    this.#isRunning = false;
-  }
-}
-
 const main = async () => {
   const port = 1883;
-  const db = createDatabase();
+  const BULLMQ_WORKER_NAME = "mqtt_message_queue";
+
   const redis = new Redis({
     retryStrategy: (times) => Math.min(times * 50, 2000),
+    maxRetriesPerRequest: null,
   });
-  const messageListener = new MessageListener(redis, db);
   const broker = await Aedes.createBroker({
     mq: createRedisMq(),
     persistence: createRedisPersistence(),
   });
   const server = createServer(broker.handle);
+  const db = createDatabase();
+  const worker = new Worker(
+    BULLMQ_WORKER_NAME,
+    async (job) => {
+      const { topic, payload } = job.data;
+      console.log(`Processing message from topic ${topic}: ${payload}`);
+
+      await new Promise<void>((resolve, reject) => {
+        broker.publish(
+          {
+            cmd: "publish",
+            /**
+             * QoS 0: 最多一次传输，消息可能丢失或重复。
+             * QoS 1: 至少一次传输，确保消息至少到达一次，但可能会重复。
+             * QoS 2: 只有一次传输，确保消息仅到达一次，适用于重要消息。
+             */
+            qos: 0,
+            dup: false,
+            retain: false,
+            topic,
+            payload: Buffer.from(payload),
+          },
+          (error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve();
+            }
+          },
+        );
+      });
+    },
+    {
+      // @ts-ignore
+      connection: redis,
+      removeOnComplete: {
+        count: 100,
+      },
+      removeOnFail: {
+        count: 100,
+      },
+    },
+  );
 
   redis.on("error", (err) => {
     console.error("Redis Client Error", err);
   });
-  redis.on("end", () => {
-    messageListener.stop();
-  });
-  redis.on("close", () => {
-    messageListener.stop();
-  });
-  redis.on("ready", async () => {
-    messageListener.start();
-  });
 
-  const result = await redis.get("mqtt_broker_status");
-  console.log("MQTT Broker Status:", result);
-
-  // 2. 身份认证与权限控制
   broker.authenticate = (client, username, password, callback) => {
-    const authorized =
-      username === "admin" && password?.toString() === "123456";
+    const isValidUserName = username === "admin";
+    const isValidPassword = password?.toString() === "123456";
+    const authorized = isValidUserName && isValidPassword;
 
     if (authorized) {
-      // 将用户信息绑定到 client 实例
-      // client.user = username;
       Reflect.set(client, "user", username);
     }
 
-    // 第一个参数是错误对象，第二个是布尔值确认是否允许连接
     callback(null, authorized);
   };
 
-  // 3. 鉴权：限制客户端只能发布/订阅特定主题
   broker.authorizePublish = (_client, packet, callback) => {
     if (packet.topic.startsWith("public/")) {
-      return callback(null);
+      callback(null);
+    } else {
+      callback(new Error("无权发布到此主题"));
     }
-    callback(new Error("无权发布到此主题"));
   };
 
-  // 4. 事件监听（用于日志监控）
   broker.on("client", (client) => {
     console.log(`[连接] 客户端ID: ${client.id}`);
   });
@@ -98,18 +96,28 @@ const main = async () => {
   });
 
   broker.on("publish", (packet, client) => {
-    if (client) {
-      console.log(
-        `[消息] 来自 ${client.id} 的主题 ${packet.topic}: ${packet.payload.toString()}`,
-      );
-    }
+    if (!client) return;
+
+    console.log(
+      `[消息] 来自 ${client.id} 的主题 ${packet.topic}: ${packet.payload.toString()}`,
+    );
+
+    db.insert(schema.sessions).values({
+      userId: 1,
+    });
   });
 
-  server.listen(port, function () {
+  worker.on("failed", (job, err) => {
+    console.error(`Job ${job?.id} failed with error:`, err);
+  });
+
+  worker.on("completed", (job) => {
+    console.log(`Job ${job.id} completed successfully.`);
+  });
+
+  server.listen(port, () => {
     console.log("Aedes MQTT broker started and listening on port ", port);
   });
-
-  messageListener.start();
 };
 
 main().catch((err) => {
