@@ -23,5 +23,5 @@
 
     "types": ["node"]
   },
-  "include": ["./vitepress/config.ts"]
+  "include": ["./.vitepress/config.ts"]
 }
