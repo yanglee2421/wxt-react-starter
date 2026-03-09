@@ -1,4 +1,6 @@
-import axios, { type AxiosError, type AxiosInstance } from "axios";
+import axios from "axios";
+
+const resolveBearerToken = (token: string) => `Bearer ${token}`;
 
 let at = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc3MjI2MjA5MCwiZXhwIjoxNzcyMjYyOTkwfQ.vGu2IsXJC4-7Z9E61Fv8eSvD1zXXhyn1EmvLRdNtGWk`;
 let rt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInNlc3Npb25JZCI6MSwiaWF0IjoxNzcyMjYyMDkwLCJleHAiOjE3NzI4NjY4OTB9.wzY0zNlAkEiN9S-BNuQ5BMkntvmfKIfBODC-6WO9ax0`;
@@ -24,20 +26,6 @@ class AuthToken {
   setRefreshToken(refreshToken: string) {
     this.#refreshToken = refreshToken;
   }
-  async refreshTokens(axiosBing: AxiosInstance, err: AxiosError) {
-    const res = await axiosBing.request({
-      ...err.config,
-      url: "http://localhost:3000/api/auth/refresh",
-      headers: {
-        ...err.config?.headers,
-        Authorization: `Bearer ${this.getRefreshToken()}`,
-      },
-    });
-
-    const { accessToken, refreshToken } = res.data;
-    this.setAccessToken(accessToken);
-    this.setRefreshToken(refreshToken);
-  }
 }
 
 class RetryCounter {
@@ -48,17 +36,17 @@ class RetryCounter {
     this.#maxRetryCount = maxRetryCount;
   }
 
-  getRetryCount() {
-    return this.#retryCount;
+  canRetry() {
+    return this.#retryCount < this.#maxRetryCount;
   }
-  incrementRetryCount() {
+  increment() {
     if (this.#retryCount >= this.#maxRetryCount) {
       throw new Error("Failed to refresh tokens after maximum retries.");
     }
 
     this.#retryCount++;
   }
-  resetRetryCount() {
+  reset() {
     this.#retryCount = 0;
   }
 }
@@ -72,16 +60,6 @@ export const createBingAxios = () => {
   const retryCounter = new RetryCounter(3);
   const authToken = new AuthToken(at, rt);
 
-  const logout = async () => {
-    await axiosBing.request({
-      url: "http://localhost:3000/api/auth/logout",
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${authToken.getRefreshToken()}`,
-      },
-    });
-  };
-
   axiosBing.interceptors.request.use((config) => {
     config.headers.setAuthorization(
       `Bearer ${authToken.getAccessToken()}`,
@@ -94,45 +72,69 @@ export const createBingAxios = () => {
     (res) => res,
     async (err) => {
       if (!axios.isAxiosError(err)) {
-        throw err;
+        return Promise.reject(err);
       }
 
-      const status = err.response?.status;
+      const status = err.status;
       const message = err.response?.data?.message;
       const authorizationHeader = err.config?.headers?.Authorization;
+      const accessToken = authToken.getAccessToken();
+      const refreshToken = authToken.getRefreshToken();
+      const refreshTokenBearer = resolveBearerToken(refreshToken);
 
       if (status !== 401) {
-        throw err;
+        return Promise.reject(err);
       }
 
       if (message !== "ACCESS_TOKEN_EXPIRED") {
-        throw err;
+        return Promise.reject(err);
       }
 
-      /**
-       * If Refresh Token is also expired,
-       * then throw error to client,
-       * and let client to handle it (e.g. redirect to login page).
-       * Avoid infinite loop of refreshing tokens.
-       */
-      if (authorizationHeader === `Bearer ${authToken.getRefreshToken()}`) {
-        await logout();
-        throw err;
+      if (Object.is(authorizationHeader, refreshTokenBearer)) {
+        authToken.setAccessToken("");
+        authToken.setRefreshToken("");
+
+        return Promise.reject(err);
       }
 
-      await authToken.refreshTokens(axiosBing, err);
+      if (!Object.is(authorizationHeader, resolveBearerToken(accessToken))) {
+        return Promise.reject(err);
+      }
 
-      retryCounter.incrementRetryCount();
-      const result = await axiosBing.request({
-        ...err.config,
+      // To avoid infinite loop when refresh successfull but the new access token is also expired or invalid for some reason.
+      if (!retryCounter.canRetry()) {
+        retryCounter.reset();
+
+        return Promise.reject(err);
+      }
+
+      retryCounter.increment();
+      const res = await axiosBing.request({
+        url: "http://localhost:3000/api/auth/refresh",
+        method: "POST",
         headers: {
-          ...err.config?.headers,
-          Authorization: `Bearer ${authToken.getAccessToken()}`,
+          Authorization: refreshTokenBearer,
         },
       });
-      retryCounter.resetRetryCount();
 
-      return result;
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        res.data;
+      authToken.setAccessToken(newAccessToken);
+      authToken.setRefreshToken(newRefreshToken);
+
+      return axiosBing
+        .request({
+          ...err.config,
+          headers: {
+            ...err.config?.headers,
+            Authorization: resolveBearerToken(newAccessToken),
+          },
+        })
+        .then((res) => {
+          retryCounter.reset();
+
+          return res;
+        });
     },
   );
 

@@ -37,7 +37,7 @@
     "@yanglee2421/create-app": "workspace:^",
     "@yanglee2421/db": "workspace:*",
     "@yotulee/run": "jsr:^0.0.12",
-    "axios": "^1.13.0",
+    "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.5",
