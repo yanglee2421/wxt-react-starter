@@ -28,16 +28,3 @@ export const listToTree = (list: Node[]) => {
 
   return tree;
 };
-
-export const chunk = <TElement>(
-  array: TElement[],
-  size: number,
-): TElement[][] => {
-  const result: TElement[][] = [];
-
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-
-  return result;
-};
