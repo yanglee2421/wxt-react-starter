@@ -15,8 +15,8 @@ stats-*.json
 web-ext.config.ts
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+# .vscode/*
+# !.vscode/extensions.json
 .idea
 .DS_Store
 *.suo
@@ -25,6 +25,8 @@ web-ext.config.ts
 *.sln
 *.sw?
 
-docs/.vitepress/cache/**/*
-# !.vitepress/config.ts
 dist
+# !.vitepress/config.ts
+docs/.vitepress/cache/**/*
+packages/serve/src/db/migrations/**/*
+data.db

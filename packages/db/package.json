@@ -1,0 +1,57 @@
+{
+  "name": "@yanglee2421/db",
+  "version": "0.0.0",
+  "description": "A database module that provides an interface for connecting to and interacting with a MongoDB database.",
+  "keywords": [
+    "database",
+    "sqlite",
+    "dirzzle-orm"
+  ],
+  "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/yanglee2421.git",
+    "directory": "/packages/db"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/yanglee2421/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
+  "private": false,
+  "files": [
+    "dist",
+    "drizzle"
+  ],
+  "type": "module",
+  "exports": {
+    "types": {
+      "import": "./dist/index.d.mts",
+      "require": "./dist/index.d.cts"
+    },
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "db:push": "drizzle-kit push",
+    "db:pull": "drizzle-kit pull",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "drizzle-orm": "1.0.0-beta.15-859cf75"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "drizzle-kit": "1.0.0-beta.15-859cf75",
+    "tsdown": "^0.20.3"
+  },
+  "peerDependencies": {
+    "better-sqlite3": "^12.6.2",
+    "drizzle-orm": "1.0.0-beta.15-859cf75"
+  }
+}

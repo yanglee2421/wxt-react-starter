@@ -21,7 +21,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["./src/**/*.ts", "./tsdown.config.ts"]
+  "include": ["src", "drizzle.config.ts"]
 }

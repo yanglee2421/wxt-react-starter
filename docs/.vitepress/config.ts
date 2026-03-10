@@ -35,6 +35,7 @@ export default defineConfig({
     },
     socialLinks: [{ icon: "github", link: "https://github.com/yanglee2421" }],
     nav: [
+      { text: "Best Practices", link: "/best_practices/locale.md" },
       { text: "ECMAScript", link: "/ecmascript/index.md" },
       { text: "Toolkit", link: "/toolkit/00_git.md" },
       { text: "Environment", link: "/env/react-native.md" },

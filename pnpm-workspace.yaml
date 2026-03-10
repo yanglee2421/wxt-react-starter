@@ -1,12 +1,14 @@
 packages:
-  - apps/*
   - packages/*
-  - "docs"
+  - docs
 
 onlyBuiltDependencies:
-  - "@prisma/client"
-  - "@prisma/engines"
-  - "@tsparticles/engine"
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@tsparticles/engine'
+  - bcrypt
+  - better-sqlite3
   - esbuild
+  - msgpackr-extract
   - prisma
   - spawn-sync
