@@ -1,7 +1,9 @@
 #! pnpm tsx
 
+import { serve } from "@hono/node-server";
 import { createDatabase } from "@yanglee2421/db";
 import express from "express";
+import { createFactory } from "hono/factory";
 import http from "node:http";
 import path from "node:path";
 import url from "node:url";
@@ -17,6 +19,30 @@ import { logHandle } from "./middleware/log";
 import { createAuthRouter } from "./routers/auth";
 import { createBingRouter } from "./routers/bing";
 import { createHMISRouter } from "./routers/hmis";
+
+const honoMain = () => {
+  const factory = createFactory();
+  const app = factory.createApp();
+  app.get("/hello", (c) => {
+    return c.text("Hello, Hono!");
+  });
+  const server = serve({ ...app, port: 8080 });
+
+  // graceful shutdown
+  process.on("SIGINT", () => {
+    server.close();
+    process.exit(0);
+  });
+  process.on("SIGTERM", () => {
+    server.close((err) => {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      process.exit(0);
+    });
+  });
+};
 
 const main = async () => {
   const PORT = 3000;
@@ -80,3 +106,4 @@ const main = async () => {
 };
 
 main();
+honoMain();

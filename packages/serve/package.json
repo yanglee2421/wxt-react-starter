@@ -34,6 +34,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.12",
     "@yanglee2421/create-app": "workspace:^",
     "@yanglee2421/db": "workspace:*",
     "@yotulee/run": "jsr:^0.0.12",
@@ -44,6 +45,7 @@
     "drizzle-orm": "1.0.0-beta.15-859cf75",
     "express": "^5.1.0",
     "formidable": "^3.5.4",
+    "hono": "^4.12.11",
     "ioredis": "^5.10.0",
     "jsonwebtoken": "^9.0.3",
     "lodash": "^4.17.21",
