@@ -1,7 +1,7 @@
 #! pnpm tsx
 
 import { serve } from "@hono/node-server";
-import { createDatabase } from "@yanglee2421/db";
+import { createDatabase, schema } from "@yanglee2421/db";
 import express from "express";
 import { createFactory } from "hono/factory";
 import http from "node:http";
@@ -20,11 +20,23 @@ import { createAuthRouter } from "./routers/auth";
 import { createBingRouter } from "./routers/bing";
 import { createHMISRouter } from "./routers/hmis";
 
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const databasePath = path.resolve(__dirname, "../data.db");
+const db = createDatabase({
+  databasePath,
+  runMigrate: true,
+});
+
 const honoMain = () => {
   const factory = createFactory();
   const app = factory.createApp();
   app.get("/hello", (c) => {
     return c.text("Hello, Hono!");
+  });
+  app.get("/", async (c) => {
+    const rows = await db.select().from(schema.users);
+
+    return c.json({ rows });
   });
   const server = serve({ ...app, port: 8080 });
 
@@ -49,12 +61,6 @@ const main = async () => {
   const app = express();
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server });
-  const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-  const databasePath = path.resolve(__dirname, "../data.db");
-  const db = createDatabase({
-    databasePath,
-    runMigrate: true,
-  });
   const bingAxios = createBingAxios();
   const hashService = new HashService(10);
   const jwtService = new JWTService();

@@ -40,18 +40,5 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
-  },
-  "dependencies": {
-    "better-sqlite3": "^12.6.2",
-    "drizzle-orm": "1.0.0-beta.15-859cf75"
-  },
-  "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "drizzle-kit": "1.0.0-beta.15-859cf75",
-    "tsdown": "^0.20.3"
-  },
-  "peerDependencies": {
-    "better-sqlite3": "^12.6.2",
-    "drizzle-orm": "1.0.0-beta.15-859cf75"
   }
 }
