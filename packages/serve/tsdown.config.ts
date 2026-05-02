@@ -34,9 +34,6 @@ export default defineConfig((conf) => {
       esm: {
         target: ["ES2023"],
       },
-      cjs: {
-        target: ["node20"],
-      },
     },
     outDir: path.resolve(__dirname, "dist"),
     outExtensions: ({ format }) => {
@@ -54,7 +51,23 @@ export default defineConfig((conf) => {
     fixedExtension: false,
     plugins: [],
     deps: {
-      skipNodeModulesBundle: false,
+      skipNodeModulesBundle: true,
+      // alwaysBundle: [
+      //   "@hono/node-server",
+      //   "@yanglee2421/db",
+      //   "@yotulee/run",
+      //   "awilix",
+      //   "axios",
+      //   "bcrypt",
+      //   "hono",
+      //   "ink",
+      //   "lodash",
+      //   "react",
+      //   "zod",
+      //   "hono/logger",
+      //   "hono/factory",
+      //   "react/jsx-runtime",
+      // ],
     },
   };
 });
