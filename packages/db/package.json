@@ -35,10 +35,10 @@
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown",
-    "db:push": "drizzle-kit push",
-    "db:pull": "drizzle-kit pull",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "push": "drizzle-kit push",
+    "pull": "drizzle-kit pull",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "studio": "drizzle-kit studio"
   }
 }

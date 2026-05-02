@@ -2,6 +2,8 @@ import path from "node:path";
 import url from "node:url";
 import { defineConfig } from "tsdown";
 
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+
 const calcualteJSExtension = (format: string) => {
   switch (format) {
     case "es":
@@ -25,11 +27,9 @@ const calcualteDTSExtension = (format: string) => {
 };
 
 export default defineConfig((conf) => {
-  const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-
   return {
-    entry: ["src/index.ts"],
-    dts: true,
+    entry: ["src/main.tsx"],
+    dts: false,
     format: {
       esm: {
         target: ["ES2023"],
@@ -54,7 +54,7 @@ export default defineConfig((conf) => {
     fixedExtension: false,
     plugins: [],
     deps: {
-      skipNodeModulesBundle: true,
+      skipNodeModulesBundle: false,
     },
   };
 });

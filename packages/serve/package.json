@@ -26,37 +26,31 @@
     "require": "./dist/index.cjs"
   },
   "scripts": {
-    "dev": "tsx watch ./src/main.ts",
-    "db:push": "drizzle-kit push",
-    "db:pull": "drizzle-kit pull",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "dev": "tsx watch ./src/main.tsx",
+    "build": "tsdown"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.12",
-    "@yanglee2421/create-app": "workspace:^",
     "@yanglee2421/db": "workspace:*",
     "@yotulee/run": "jsr:^0.0.12",
+    "awilix": "^13.0.3",
     "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
     "formidable": "^3.5.4",
     "hono": "^4.12.11",
+    "ink": "^7.0.1",
     "ioredis": "^5.10.0",
-    "jsonwebtoken": "^9.0.3",
     "lodash": "^4.17.21",
+    "react": "^19.2.5",
     "ws": "^8.18.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.5",
     "@types/formidable": "^3.4.6",
-    "@types/jsonwebtoken": "^9.0.10",
+    "@types/ink": "^2.0.3",
     "@types/lodash": "^4.17.20",
+    "@types/react": "^19.2.14",
     "@types/ws": "^8.18.1"
   }
 }

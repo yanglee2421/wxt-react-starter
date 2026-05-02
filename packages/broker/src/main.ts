@@ -1,7 +1,9 @@
-import { createDatabase, schema } from "@yanglee2421/db";
+import { defaultDbUrl, relations, schema } from "@yanglee2421/db";
 import { Aedes } from "aedes";
 import createRedisPersistence from "aedes-persistence-redis";
+import Database from "better-sqlite3";
 import { Worker } from "bullmq";
+import { drizzle } from "drizzle-orm/better-sqlite3";
 import { Redis } from "ioredis";
 import createRedisMq from "mqemitter-redis";
 import { createServer } from "node:net";
@@ -19,7 +21,8 @@ const main = async () => {
     persistence: createRedisPersistence(),
   });
   const server = createServer(broker.handle);
-  const db = createDatabase();
+  const dbClient = new Database(defaultDbUrl);
+  const db = drizzle({ client: dbClient, schema, relations });
   const worker = new Worker(
     BULLMQ_WORKER_NAME,
     async (job) => {

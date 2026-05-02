@@ -24,7 +24,8 @@
     "types": ["node"],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "jsx": "react-jsx"
   },
-  "include": ["src", "scripts", "types"]
+  "include": ["src", "scripts", "types", "tsdown.config.ts"]
 }

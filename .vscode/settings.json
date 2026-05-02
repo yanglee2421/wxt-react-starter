@@ -1,10 +1,10 @@
 {
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit"
-    // "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
+    "source.fixAll.oxc": "explicit"
   },
   "editor.fontSize": 20,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "editor.linkedEditing": true,
   "git.confirmSync": false,
