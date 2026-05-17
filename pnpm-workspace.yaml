@@ -2,13 +2,8 @@ packages:
   - packages/*
   - docs
 
-onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@tsparticles/engine'
-  - bcrypt
-  - better-sqlite3
-  - esbuild
-  - msgpackr-extract
-  - prisma
-  - spawn-sync
+allowBuilds:
+  bcrypt: true
+  esbuild: true
+  msgpackr-extract: true
+

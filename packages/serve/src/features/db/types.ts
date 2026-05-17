@@ -1,4 +1,7 @@
 import type { relations, schema } from "@yanglee2421/db";
-import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import type { NodeSQLiteDatabase } from "drizzle-orm/node-sqlite";
+import type { DatabaseSync } from "node:sqlite";
 
-export type DBClient = BetterSQLite3Database<typeof schema, typeof relations>;
+export type DBClient = NodeSQLiteDatabase<typeof schema, typeof relations> & {
+  $client: DatabaseSync;
+};

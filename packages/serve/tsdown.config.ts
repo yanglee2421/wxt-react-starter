@@ -44,7 +44,7 @@ export default defineConfig((conf) => {
     },
     clean: true,
 
-    target: "node20",
+    target: "node24",
     platform: "node",
 
     minify: !conf.watch,

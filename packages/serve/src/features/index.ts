@@ -15,7 +15,9 @@ container.register({
   dbPath: asValue(defaultDbUrl),
   rounds: asValue(10),
 
-  db: asClass(DBService).singleton(),
+  db: asClass(DBService)
+    .singleton()
+    .disposer((db) => db.dispose()),
   hash: asClass(HashService).singleton(),
   axiosBing: asFunction(createBingAxios).singleton(),
   axiosAutumnfish: asFunction(createAutumnfishAxios).singleton(),
