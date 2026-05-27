@@ -1,0 +1,9 @@
+{
+  "name": "external-db",
+  "scripts": {
+    "dev": "tsx ./src/index.ts"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.2"
+  }
+}
