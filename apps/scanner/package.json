@@ -1,0 +1,9 @@
+{
+  "name": "scanner",
+  "dependencies": {
+    "serialport": "^13.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch ./src/main.ts"
+  }
+}

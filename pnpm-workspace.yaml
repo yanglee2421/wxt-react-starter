@@ -1,9 +1,10 @@
 packages:
   - packages/*
+  - apps/*
   - docs
 
 allowBuilds:
+  '@serialport/bindings-cpp': true
   bcrypt: true
   esbuild: true
   msgpackr-extract: true
-
