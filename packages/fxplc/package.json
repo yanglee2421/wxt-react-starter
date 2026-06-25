@@ -1,0 +1,9 @@
+{
+  "name": "fxplc",
+  "type": "module",
+  "devDependencies": {
+    "@types/debug": "^4.1.13",
+    "debug": "^4.4.3",
+    "serialport": "^13.0.0"
+  }
+}
