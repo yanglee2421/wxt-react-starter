@@ -1,5 +1,5 @@
 {
-  "name": "fxplc",
+  "name": "cpp-addon",
   "type": "module",
   "files": [
     "dist"
@@ -12,8 +12,12 @@
     "import": "./dist/index.mjs",
     "require": "./dist/index.cjs"
   },
+  "scripts": {
+    "dev": "tsx watch ./src/main.ts",
+    "build": "node-gyp rebuild"
+  },
   "devDependencies": {
-    "rxjs": "^7.8.2",
-    "serialport": "^13.0.0"
+    "node-addon-api": "^8.9.0",
+    "node-gyp": "^13.0.1"
   }
 }

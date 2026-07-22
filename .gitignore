@@ -30,3 +30,4 @@ dist
 docs/.vitepress/cache/**/*
 packages/serve/src/db/migrations/**/*
 *.db
+build
