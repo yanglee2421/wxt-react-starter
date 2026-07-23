@@ -6,19 +6,22 @@ const addon = requrire("../build/Release/cpp_addon.node") as CppAddon;
 
 console.log(addon);
 
-const windowHandle = addon.findWindow(null, "信息录入 . 现车轮");
-console.log(typeof windowHandle);
-addon.enumChildWindows(windowHandle, (subHandle) => {
-  console.log(typeof subHandle, subHandle);
+const main = () => {
+  const windowHandle = addon.findWindow(null, "信息录入 . 现车轮");
+  console.log(typeof windowHandle);
 
-  const contrlId = addon.getWindowLongPtrW(subHandle, -12);
-  console.log(typeof contrlId, contrlId.toString(16));
+  addon.enumChildWindows(windowHandle, (subHandle) => {
+    console.log(typeof subHandle, subHandle);
 
-  if (contrlId == Number.parseInt("1cc0", 16)) {
-    addon.sendMessage(subHandle, 0x00f1, 0, 0);
-    addon.setForegroundWindow(windowHandle);
-    return false;
-  }
+    const contrlId = addon.getWindowLongPtrW(subHandle, -12);
+    console.log(typeof contrlId, contrlId.toString(16));
 
-  return true;
-});
+    if (contrlId === BigInt(Number.parseInt("1cc0", 16))) {
+      addon.sendMessage(subHandle, 0x00f1, 0, 0);
+      addon.setForegroundWindow(windowHandle);
+      return false;
+    }
+
+    return true;
+  });
+};

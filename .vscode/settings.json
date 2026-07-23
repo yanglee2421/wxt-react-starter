@@ -4,12 +4,25 @@
     "source.fixAll.oxc": "explicit"
   },
   "editor.fontSize": 20,
-  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
   "editor.linkedEditing": true,
+
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
   "git.autofetch": true,
+
   "workbench.iconTheme": "vscode-icons",
-  "workbench.colorTheme": "Dark Modern"
+  "workbench.colorTheme": "Dark Modern",
+
+  "[cpp]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  }
 }
