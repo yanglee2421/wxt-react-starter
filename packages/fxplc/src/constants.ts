@@ -8,6 +8,9 @@ export const RegisterType = Object.freeze({
   Counter: "C",
 });
 
+/**
+ * Base address for Force On & Force Off
+ */
 export const registersMapBitImages = Object.freeze({
   S: [0x0000, 8],
   X: [0x0080, 10],
@@ -17,12 +20,18 @@ export const registersMapBitImages = Object.freeze({
   D: [0x1000, 8],
 });
 
+/**
+ * Base address for Read byte & Write byte
+ */
 export const registersMapData = Object.freeze({
   T: 0x0800,
   C: 0x0a00,
   D: 0x1000,
 });
 
+/**
+ * Base address for Read Bit
+ */
 export const registersMapBits = Object.freeze({
   S: [0x0000, 8],
   X: [0x0400, 10],

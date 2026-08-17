@@ -18,14 +18,8 @@ import {
 } from "rxjs";
 import { SerialPort } from "serialport";
 import { Controls, registersMapData } from "./constants";
-import {
-  calcCheckSum,
-  readByte,
-  resolveCheckSum,
-  resolveResult,
-  writeByte,
-} from "./fxplc";
-import { decode, number2WordSigned, wordSigned2number } from "./number-type";
+import { readByte, writeByte } from "./fxplc";
+import { number2WordSigned } from "./number-type";
 import { calcByteAddress } from "./register";
 
 const createPort = (path: string) => {
@@ -68,10 +62,7 @@ path$
         (c) => {
           const port = Reflect.get(Object(c), "port") as SerialPort;
 
-          return NEVER.pipe(
-            startWith(port),
-            takeUntil(path$.pipe(last(), defaultIfEmpty(null))),
-          );
+          return NEVER.pipe(startWith(port), takeUntil(path$.pipe(last(), defaultIfEmpty(null))));
         },
       ).pipe(shareReplay({ bufferSize: 1, refCount: true }));
     }),
@@ -111,32 +102,12 @@ cmd$
         console.log("NAK");
         return;
       }
-
-      const data = resolveResult(buf);
-      const checkSum = resolveCheckSum(buf);
-      const checkSumOk = checkSum.equals(
-        calcCheckSum(Buffer.concat([data, Controls.ETX.buf])),
-      );
-
-      if (!checkSumOk) {
-        console.log("Check sum is incorrect");
-        return;
-      }
-
-      const bit = 0;
-      const isON =
-        (Number.parseInt(data.toString("ascii"), 16) & (1 << bit)) !== 0;
-
-      console.log(isON);
-      console.log(wordSigned2number(decode(data)));
     }),
   )
   .subscribe();
 
 path$.next("COM1");
 
-cmd$.next(
-  writeByte(calcByteAddress(registersMapData.D, 1), number2WordSigned(258)),
-);
+cmd$.next(writeByte(calcByteAddress(registersMapData.D, 1), number2WordSigned(258)));
 
 cmd$.next(readByte(calcByteAddress(registersMapData.D, 1), 2));
