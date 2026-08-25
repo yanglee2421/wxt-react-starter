@@ -81,6 +81,8 @@ const watch$ = new Observable((sub) => {
       },
     },
     external: (id, parentId, isResolved) => {
+      void parentId;
+
       if (id.startsWith("@/")) {
         return false;
       }

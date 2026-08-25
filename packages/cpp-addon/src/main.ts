@@ -3,10 +3,9 @@ import type { CppAddon } from "./types";
 
 const requrire = createRequire(import.meta.url);
 const addon = requrire("../build/Release/cpp_addon.node") as CppAddon;
+export default addon;
 
-console.log(addon);
-
-const main = () => {
+export const main = () => {
   const windowHandle = addon.findWindow(null, "信息录入 . 现车轮");
   console.log(typeof windowHandle);
 
