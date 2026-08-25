@@ -82,20 +82,27 @@ const watch$ = new Observable((sub) => {
     },
     external: (id, parentId, isResolved) => {
       void parentId;
-
-      if (id.startsWith("@/")) {
-        return false;
-      }
-
-      if (id.startsWith(".")) {
-        return false;
-      }
+      // console.log(id);
+      // console.log(parentId);
+      // console.log(isResolved);
 
       if (isResolved) {
-        return false;
-      }
+        return id.includes("node_modules");
+      } else {
+        if (id.startsWith(".")) {
+          return false;
+        }
 
-      return true;
+        if (id.startsWith("@/")) {
+          return false;
+        }
+
+        if (id.startsWith("/")) {
+          return false;
+        }
+
+        return true;
+      }
     },
   });
 
