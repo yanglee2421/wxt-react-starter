@@ -28,13 +28,13 @@ const calcualteDTSExtension = (format: string) => {
 
 export default defineConfig((conf) => {
   return {
+    // Input
     entry: ["src/main.ts"],
-    dts: false,
-    format: {
-      esm: {
-        target: ["ES2023"],
-      },
+    deps: {
+      neverBundle: true,
     },
+
+    // Output
     outDir: path.resolve(__dirname, "dist"),
     outExtensions: ({ format }) => {
       return {
@@ -42,16 +42,15 @@ export default defineConfig((conf) => {
         dts: calcualteDTSExtension(format),
       };
     },
-    clean: true,
-
-    target: "node24",
+    format: "esm",
     platform: "node",
-
+    target: "node24",
+    dts: false,
     minify: !conf.watch,
     fixedExtension: false,
+
+    // Chore
     plugins: [],
-    deps: {
-      skipNodeModulesBundle: true,
-    },
+    clean: true,
   };
 });

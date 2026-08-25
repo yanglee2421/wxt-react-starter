@@ -1,5 +1,5 @@
 {
-  "name": "@yanglee2421/create-app",
+  "name": "@yanglee2421/cli",
   "version": "0.1.0",
   "description": "create a vite app",
   "keywords": [],
@@ -20,34 +20,26 @@
   ],
   "type": "module",
   "exports": {
-    "types": {
-      "default": "./dist/index.d.mts",
-      "require": "./dist/index.d.cts"
-    },
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs"
+    "import": "./dist/index.mjs"
   },
   "bin": {
-    "create-app": "dist/index.mjs"
+    "cli": "dist/index.mjs"
   },
   "engines": {
     "node": "^20.0.0 || >=22.0.0"
   },
   "scripts": {
-    "dev": "tsdown --watch",
-    "build": "tsdown"
+    "dev": "node ./dev.ts"
   },
   "devDependencies": {
     "@clack/prompts": "^1.0.1",
-    "@types/cross-spawn": "^6.0.3",
     "@types/ink": "^2.0.3",
     "@types/react": "^19.2.14",
-    "cross-spawn": "^7.0.3",
-    "mri": "^1.2.0",
     "p-limit": "^7.3.0"
   },
   "dependencies": {
     "ink": "^7.0.1",
-    "react": "^19.2.5"
+    "react": "^19.2.5",
+    "rxjs": "^7.8.2"
   }
 }

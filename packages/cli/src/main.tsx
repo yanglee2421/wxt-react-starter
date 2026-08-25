@@ -1,5 +1,28 @@
 import { Box, render, Static, Text, useCursor, useInput } from "ink";
+import process from "node:process";
 import React from "react";
+import { fromEventPattern, merge, tap } from "rxjs";
+
+const exit$ = fromEventPattern(
+  (f) => process.on("exit", f),
+  (f) => process.off("exit", f),
+);
+const sigint$ = fromEventPattern(
+  (f) => process.on("SIGINT", f),
+  (f) => process.off("SIGINT", f),
+).pipe(
+  tap(() => {
+    process.exit();
+  }),
+);
+const sigterm$ = fromEventPattern(
+  (f) => process.on("SIGTERM", f),
+  (f) => process.off("SIGTERM", f),
+).pipe(
+  tap(() => {
+    process.exit();
+  }),
+);
 
 const Counter = () => {
   const [inputText, setInput] = React.useState("");
@@ -32,10 +55,14 @@ const Counter = () => {
           </Box>
         )}
       </Static>
-      <Text color="green">tests passed: {items.length}</Text>
+      <Text color="green">passed: {items.length}</Text>
       <Text color="red">{inputText}</Text>
     </>
   );
 };
 
-render(<Counter />);
+export const main = () => {
+  merge(exit$, sigterm$, sigint$).subscribe();
+
+  return render(<Counter />);
+};

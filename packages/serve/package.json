@@ -26,8 +26,7 @@
     "require": "./dist/index.cjs"
   },
   "scripts": {
-    "dev": "tsx watch ./src/main.tsx",
-    "build": "tsdown"
+    "dev": "node ./dev.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.12",
@@ -36,16 +35,12 @@
     "awilix": "^13.0.3",
     "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
+    "drizzle-orm": "1.0.0-beta.22",
     "hono": "^4.12.11",
-    "ink": "^7.0.1",
-    "lodash": "^4.17.21",
-    "react": "^19.2.5",
+    "rxjs": "^7.8.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/ink": "^2.0.3",
-    "@types/lodash": "^4.17.20",
-    "@types/react": "^19.2.14"
+    "@types/bcrypt": "^6.0.0"
   }
 }

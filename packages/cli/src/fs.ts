@@ -1,5 +1,5 @@
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
 import pLimit from "p-limit";
 
 const ensureDir = async (dir: string) => {
@@ -44,10 +44,7 @@ export const flatLs = async (dir: string): Promise<string[]> => {
   return results.flat();
 };
 
-export const copyDir = async (
-  source: string,
-  destination: string,
-): Promise<string[]> => {
+export const copyDir = async (source: string, destination: string): Promise<string[]> => {
   const inputState = await fs.promises.stat(source);
 
   if (inputState.isFile()) {
