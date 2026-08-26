@@ -51,6 +51,7 @@ const node$ = new Observable((sub) => {
   });
   ps.on("close", () => {
     sub.complete();
+    process.exit();
   });
 
   return () => {

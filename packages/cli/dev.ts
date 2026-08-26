@@ -51,9 +51,11 @@ const node$ = new Observable((sub) => {
   });
   ps.on("close", () => {
     sub.complete();
+    process.exit();
   });
 
   return () => {
+    console.clear();
     ps.removeAllListeners();
     ps.kill("SIGHUP");
   };
@@ -126,13 +128,7 @@ const watch$ = new Observable((sub) => {
 
 const dev$ = watch$.pipe(
   switchMap(() => node$),
-  takeUntil(
-    merge(exit$, sigint$, sigterm$).pipe(
-      tap(() => {
-        console.log("process exit");
-      }),
-    ),
-  ),
+  takeUntil(merge(exit$, sigint$, sigterm$)),
 );
 
 dev$.subscribe();

@@ -39,7 +39,7 @@ export const serveApp = () => {
     return c.json({ rows });
   });
 
-  return serve({ ...app, port: 8080 }, (info) => {
+  return serve({ ...app, port: 8080, hostname: "localhost" }, (info) => {
     console.log(info);
   });
 };

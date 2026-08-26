@@ -4,7 +4,5 @@ export { relations } from "./relations.ts";
 export * as schema from "./schema.ts";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-
 export const migrationsFolder = path.resolve(__dirname, "../drizzle/migrations");
-
-export const defaultDbUrl = path.join(__dirname, "../data.db");
+export const defaultDbUrl = path.join(__dirname, "../local.db");
