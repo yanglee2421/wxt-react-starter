@@ -35,3 +35,8 @@ build
 *.pdb
 *.exe
 *.ilk
+
+# For gitea
+apps/gitea/data/
+apps/gitea/etc/
+apps/gitea/postgres/
