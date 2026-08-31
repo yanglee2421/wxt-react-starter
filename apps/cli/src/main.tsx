@@ -34,12 +34,9 @@ const Counter = () => {
     if (key.backspace) {
       setInput((prev) => {
         const val = prev.slice(0, -1);
-
         cursor.setCursorPosition({ x: val.length, y: 2 });
-
         return val;
       });
-
       return;
     }
 
@@ -52,15 +49,14 @@ const Counter = () => {
 
     setInput((prev) => {
       const val = prev + input;
-
       cursor.setCursorPosition({ x: val.length, y: 2 });
-
       return val;
     });
   });
 
   return (
     <>
+      <Text>App Start</Text>
       <Static items={items}>
         {(item, index) => (
           <Box key={index}>
