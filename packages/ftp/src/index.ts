@@ -2,7 +2,7 @@ import { Client } from "basic-ftp";
 import path from "node:path";
 import url from "node:url";
 
-const main = async () => {
+export const main = async () => {
   const client = new Client();
   try {
     await client.access({
@@ -25,5 +25,3 @@ const main = async () => {
     client.close();
   }
 };
-
-main();

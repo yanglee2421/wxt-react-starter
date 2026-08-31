@@ -2,7 +2,8 @@ import path from "node:path";
 import url from "node:url";
 import { defineConfig } from "tsdown";
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const calcualteJSExtension = (format: string) => {
   switch (format) {
