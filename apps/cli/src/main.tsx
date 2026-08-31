@@ -31,19 +31,32 @@ const Counter = () => {
   const cursor = useCursor();
 
   useInput((input, key) => {
-    cursor.setCursorPosition({ x: 10, y: 1 });
-
     if (key.backspace) {
-      setInput((prev) => prev.slice(0, -1));
+      setInput((prev) => {
+        const val = prev.slice(0, -1);
+
+        cursor.setCursorPosition({ x: val.length, y: 2 });
+
+        return val;
+      });
+
       return;
     }
 
     if (key.return) {
       setItems((prev) => [...prev, inputText]);
       setInput("");
+      cursor.setCursorPosition(void 0);
+      return;
     }
 
-    setInput((prev) => prev + input);
+    setInput((prev) => {
+      const val = prev + input;
+
+      cursor.setCursorPosition({ x: val.length, y: 2 });
+
+      return val;
+    });
   });
 
   return (
@@ -51,11 +64,13 @@ const Counter = () => {
       <Static items={items}>
         {(item, index) => (
           <Box key={index}>
+            <Text>{index + 1}. </Text>
             <Text color="blue">{item}</Text>
           </Box>
         )}
       </Static>
-      <Text color="green">passed: {items.length}</Text>
+      <Text color="cyan">Length: {inputText.length}</Text>
+      <Text color="green">Passed: {items.length}</Text>
       <Text color="red">{inputText}</Text>
     </>
   );

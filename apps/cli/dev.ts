@@ -47,6 +47,7 @@ const node$ = new Observable((sub) => {
     sub.error(error);
   });
   ps.on("spawn", () => {
+    console.clear();
     sub.next(ps);
   });
   ps.on("close", () => {
@@ -55,7 +56,6 @@ const node$ = new Observable((sub) => {
   });
 
   return () => {
-    console.clear();
     ps.removeAllListeners();
     ps.kill("SIGHUP");
   };
