@@ -55,18 +55,6 @@ importers:
         specifier: ^7.3.0
         version: 7.3.0
 
-  apps/demo:
-    dependencies:
-      basic-ftp:
-        specifier: ^6.0.1
-        version: 6.0.1
-
-  apps/scanner:
-    dependencies:
-      serialport:
-        specifier: ^13.0.0
-        version: 13.0.0
-
   apps/serve:
     dependencies:
       '@hono/node-server':
@@ -134,31 +122,6 @@ importers:
         specifier: ^7.2.0
         version: 7.2.0
 
-  packages/cli:
-    dependencies:
-      ink:
-        specifier: ^7.0.1
-        version: 7.0.1(@types/react@19.2.14)(react@19.2.5)
-      react:
-        specifier: ^19.2.5
-        version: 19.2.5
-      rxjs:
-        specifier: ^7.8.2
-        version: 7.8.2
-    devDependencies:
-      '@clack/prompts':
-        specifier: ^1.0.1
-        version: 1.0.1
-      '@types/ink':
-        specifier: ^2.0.3
-        version: 2.0.3(@types/react@19.2.14)(react@19.2.5)
-      '@types/react':
-        specifier: ^19.2.14
-        version: 19.2.14
-      p-limit:
-        specifier: ^7.3.0
-        version: 7.3.0
-
   packages/cpp-addon:
     devDependencies:
       node-addon-api:
@@ -197,43 +160,6 @@ importers:
       serialport:
         specifier: ^13.0.0
         version: 13.0.0
-
-  packages/serve:
-    dependencies:
-      '@hono/node-server':
-        specifier: ^1.19.12
-        version: 1.19.12(hono@4.12.11)
-      '@yanglee2421/db':
-        specifier: workspace:*
-        version: link:../db
-      '@yotulee/run':
-        specifier: jsr:^0.0.12
-        version: '@jsr/yotulee__run@0.0.12'
-      awilix:
-        specifier: ^13.0.3
-        version: 13.0.3
-      axios:
-        specifier: ^1.13.6
-        version: 1.13.6
-      bcrypt:
-        specifier: ^6.0.0
-        version: 6.0.0
-      drizzle-orm:
-        specifier: 1.0.0-beta.22
-        version: 1.0.0-beta.22(zod@4.3.6)
-      hono:
-        specifier: ^4.12.11
-        version: 4.12.11
-      rxjs:
-        specifier: ^7.8.2
-        version: 7.8.2
-      zod:
-        specifier: ^4.3.6
-        version: 4.3.6
-    devDependencies:
-      '@types/bcrypt':
-        specifier: ^6.0.0
-        version: 6.0.0
 
 packages:
 
@@ -5429,14 +5355,6 @@ snapshots:
     dependencies:
       fast-glob: 3.3.3
 
-  axios@1.13.6:
-    dependencies:
-      follow-redirects: 1.15.11
-      form-data: 4.0.5
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-
   axios@1.13.6(debug@4.4.3):
     dependencies:
       follow-redirects: 1.15.11(debug@4.4.3)
@@ -5773,8 +5691,6 @@ snapshots:
   focus-trap@7.8.0:
     dependencies:
       tabbable: 6.4.0
-
-  follow-redirects@1.15.11: {}
 
   follow-redirects@1.15.11(debug@4.4.3):
     optionalDependencies:
