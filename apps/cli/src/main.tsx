@@ -1,3 +1,4 @@
+import addon from "@yanglee2421/cpp-addon";
 import { Box, render, Static, Text, useCursor, useInput } from "ink";
 import process from "node:process";
 import React from "react";
@@ -54,6 +55,16 @@ const Counter = () => {
     });
   });
 
+  React.useEffect(() => {
+    const result = addon.TOFD_PORT_OpenDevice();
+    console.log("TOFD_PORT_OpenDevice result:", result);
+
+    return () => {
+      const result = addon.TOFD_PORT_CloseDevice();
+      console.log("TOFD_PORT_CloseDevice result:", result);
+    };
+  }, []);
+
   return (
     <>
       <Text>App Start</Text>
@@ -77,3 +88,5 @@ export const main = () => {
 
   return render(<Counter />);
 };
+
+main();

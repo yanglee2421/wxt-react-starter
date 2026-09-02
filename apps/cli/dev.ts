@@ -70,7 +70,7 @@ const node$ = new Observable((sub) => {
 const watch$ = new Observable((sub) => {
   const watcher = watch({
     // Input
-    input: "./src/index.ts",
+    input: "./src/main.tsx",
     output: {
       file: "./dist/index.mjs",
       format: "esm",
