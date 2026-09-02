@@ -22,7 +22,9 @@ typedef struct _tagNM_DATA {
   int pAlarm[2];
 } NM_DATA, *P_NM_DATA;
 
+// 打开设备
 Dll_API bool TOFD_PORT_OpenDevice(int type);
+// 关闭设备
 Dll_API bool TOFD_PORT_CloseDevice();
 Dll_API bool TOFD_PORT_IsOpen();
 Dll_API bool TOFD_PORT_IsConfigChange();
@@ -68,11 +70,13 @@ Dll_API bool TOFD_PORT_ResetCoder_Immediate();
 } // namespace TOFDPort
 
 namespace TOFDPortExtensions {
+// 初始化
 Dll_API void ITS_init();
 Dll_API bool ITS_IsExist();
 Dll_API bool ITS_IsOpen();
 Dll_API bool ITS_OpenUSB();
 Dll_API void ITS_CloseUSB();
+// 设置通道
 Dll_API void ITS_SetCh(
     unsigned int ch_left_s,
     unsigned int ch_left_r,
@@ -82,6 +86,7 @@ Dll_API void ITS_SetHZ(unsigned int hz_left, unsigned int hz_right);
 Dll_API void ITS_SetHard_Delayns(unsigned int delayns);
 Dll_API void ITS_SetPlusWidth(unsigned int plus_left, unsigned int plus_right);
 Dll_API void ITS_SetXmove(unsigned int xmove_left, unsigned int xmove_right);
+// 设置增益
 Dll_API void ITS_SetdB(unsigned int dB_left, unsigned int dB_right);
 Dll_API void ITS_SetDis(unsigned int dis_left, unsigned int dis_right);
 Dll_API void ITS_Selfcheck(unsigned int ch_left, unsigned int ch_right);
@@ -104,6 +109,7 @@ Dll_API void ITS_SetZip(unsigned int zip_left, unsigned int zip_right);
 Dll_API unsigned int ITS_GetZip(unsigned int ch);
 Dll_API void ITS_ReSetEncoder(unsigned int ch, unsigned int flag);
 Dll_API signed int ITS_GetEncoder(unsigned int ch, unsigned int mode);
+// 用来读
 Dll_API bool ITS_Start(unsigned char* buf_left, unsigned char* buf_right);
 Dll_API void ITS_SetEncoder_frequency(unsigned int ch, unsigned int freq);
 Dll_API unsigned int ITS_GetWorkID();
