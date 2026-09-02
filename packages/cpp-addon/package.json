@@ -1,20 +1,18 @@
 {
-  "name": "cpp-addon",
+  "name": "@yanglee2421/cpp-addon",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "lib",
+    "build"
   ],
   "exports": {
-    "types": {
-      "import": "./dist/index.d.mts",
-      "require": "./dist/index.d.cts"
-    },
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs"
+    "types": "./dist/main.d.mts",
+    "import": "./dist/main.mjs"
   },
   "scripts": {
-    "dev": "tsx watch ./src/main.ts",
-    "build": "node-gyp rebuild"
+    "dev": "tsdown",
+    "build": "tsdown && node-gyp rebuild"
   },
   "devDependencies": {
     "node-addon-api": "^8.9.0",

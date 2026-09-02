@@ -2,6 +2,7 @@
 #include <napi.h>
 #include <windows.h>
 #include <string>
+#include "TOFDPort.h"
 #include "js_util.h"
 
 Napi::Value FindWindowWrapped(const Napi::CallbackInfo& info) {
@@ -140,6 +141,26 @@ Napi::Value GetWindowLongPtrWrapped(const Napi::CallbackInfo& info) {
   });
 }
 
+Napi::Value TOFD_PORT_OpenDeviceWrapped(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  return JS::Try(env, [&]() -> Napi::Value {
+    bool result = TOFDPort::TOFD_PORT_OpenDevice(2);
+
+    return Napi::Boolean::New(env, result);
+  });
+}
+
+Napi::Value TOFD_PORT_CloseDeviceWrapped(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  return JS::Try(env, [&]() -> Napi::Value {
+    bool result = TOFDPort::TOFD_PORT_CloseDevice();
+
+    return Napi::Boolean::New(env, result);
+  });
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(
       Napi::String::New(env, "findWindow"),
@@ -156,6 +177,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(
       Napi::String::New(env, "getWindowLongPtrW"),
       Napi::Function::New(env, GetWindowLongPtrWrapped));
+
+  // TOFDPort functions
+  exports.Set(
+      Napi::String::New(env, "TOFD_PORT_OpenDevice"),
+      Napi::Function::New(env, TOFD_PORT_OpenDeviceWrapped));
+  exports.Set(
+      Napi::String::New(env, "TOFD_PORT_CloseDevice"),
+      Napi::Function::New(env, TOFD_PORT_CloseDeviceWrapped));
 
   return exports;
 }

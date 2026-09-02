@@ -38,6 +38,7 @@
     "p-limit": "^7.3.0"
   },
   "dependencies": {
+    "@yanglee2421/cpp-addon": "workspace:*",
     "ink": "^7.0.1",
     "react": "^19.2.5",
     "rxjs": "^7.8.2"

@@ -46,12 +46,13 @@ export default defineConfig((conf) => {
     format: "esm",
     platform: "node",
     target: "node24",
-    dts: false,
-    minify: !conf.watch,
+    dts: true,
+    minify: false,
     fixedExtension: false,
 
     // Chore
     plugins: [],
     clean: true,
+    onSuccess: async () => {},
   };
 });

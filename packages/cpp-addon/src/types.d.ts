@@ -1,10 +1,7 @@
 export interface CppAddon {
   findWindow(className: string | null, windowName: string | null): number;
   setForegroundWindow(hwnd: number): boolean;
-  enumChildWindows(
-    parentHwnd: number,
-    callback: (hwnd: number) => boolean,
-  ): boolean;
+  enumChildWindows(parentHwnd: number, callback: (hwnd: number) => boolean): boolean;
   sendMessage(
     hwnd: number,
     msg: number,
@@ -13,4 +10,7 @@ export interface CppAddon {
     timeout?: number,
   ): number;
   getWindowLongPtrW(hwnd: number, index: number): bigint;
+
+  TOFD_PORT_OpenDevice(): boolean;
+  TOFD_PORT_CloseDevice(): boolean;
 }

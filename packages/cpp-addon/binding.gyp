@@ -5,11 +5,24 @@
       "sources": [
         "<!@(node get-source-file.cjs)"
       ],
+      "copies": [
+        {
+          "destination": "<(PRODUCT_DIR)",
+          "files": [
+            "<(module_root_dir)/lib/TOFDPort.dll",
+            "<(module_root_dir)/lib/ftd2xx.dll"
+          ]
+        }
+      ],
       "include_dirs": [
-        "<!@(node -p \"require('node-addon-api').include\")"
+        "<!@(node -p \"require('node-addon-api').include\")",
+        "<(module_root_dir)/lib"
       ],
       "dependencies": [
         "<!(node -p \"require('node-addon-api').gyp\")"
+      ],
+      "libraries": [
+        "<(module_root_dir)/lib/TOFDPort.lib"
       ],
       "conditions": [
         [
@@ -24,7 +37,7 @@
               },
               "VCLinkerTool": {
                 "AdditionalDependencies": [
-                  "user32.lib"
+                  "user32.lib",
                 ]
               }
             }

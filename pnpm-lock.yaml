@@ -32,6 +32,9 @@ importers:
 
   apps/cli:
     dependencies:
+      '@yanglee2421/cpp-addon':
+        specifier: workspace:*
+        version: link:../../packages/cpp-addon
       ink:
         specifier: ^7.0.1
         version: 7.0.1(@types/react@19.2.14)(react@19.2.5)
