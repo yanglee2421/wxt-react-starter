@@ -22,10 +22,11 @@ typedef struct _tagNM_DATA {
   int pAlarm[2];
 } NM_DATA, *P_NM_DATA;
 
-// 打开设备
+// 连接超声板卡
 Dll_API bool TOFD_PORT_OpenDevice(int type);
-// 关闭设备
+// 断开已连接的超声板
 Dll_API bool TOFD_PORT_CloseDevice();
+// 判断超声板与电脑是否连接
 Dll_API bool TOFD_PORT_IsOpen();
 Dll_API bool TOFD_PORT_IsConfigChange();
 Dll_API bool TOFD_PORT_IsDeviceExist();
@@ -70,7 +71,7 @@ Dll_API bool TOFD_PORT_ResetCoder_Immediate();
 } // namespace TOFDPort
 
 namespace TOFDPortExtensions {
-// 初始化
+// 动态库初始化一次
 Dll_API void ITS_init();
 Dll_API bool ITS_IsExist();
 Dll_API bool ITS_IsOpen();
@@ -82,9 +83,13 @@ Dll_API void ITS_SetCh(
     unsigned int ch_left_r,
     unsigned int ch_right_s,
     unsigned int ch_right_r);
+// 设置通道频率 [当前取左右设置值的和 hz_left+hz_right 为总重复频率)
 Dll_API void ITS_SetHZ(unsigned int hz_left, unsigned int hz_right);
+// 设置硬件零点 [In 采样点数 10ns一个点]
 Dll_API void ITS_SetHard_Delayns(unsigned int delayns);
+// 设置脉冲宽度 [In 单位10ns  例如plus_left = 16 表示160ns]
 Dll_API void ITS_SetPlusWidth(unsigned int plus_left, unsigned int plus_right);
+// 设置延迟 [In 采样点数 10ns一个点]
 Dll_API void ITS_SetXmove(unsigned int xmove_left, unsigned int xmove_right);
 // 设置增益
 Dll_API void ITS_SetdB(unsigned int dB_left, unsigned int dB_right);
@@ -107,11 +112,15 @@ Dll_API void ITS_TestGetDB(
     unsigned int* dB_B3);
 Dll_API void ITS_SetZip(unsigned int zip_left, unsigned int zip_right);
 Dll_API unsigned int ITS_GetZip(unsigned int ch);
+// 重置编码器
 Dll_API void ITS_ReSetEncoder(unsigned int ch, unsigned int flag);
+// 获取编码器的值
 Dll_API signed int ITS_GetEncoder(unsigned int ch, unsigned int mode);
-// 用来读
+// 启动采集
 Dll_API bool ITS_Start(unsigned char* buf_left, unsigned char* buf_right);
+// 设置编码器频率
 Dll_API void ITS_SetEncoder_frequency(unsigned int ch, unsigned int freq);
+// 设置编码器频率
 Dll_API unsigned int ITS_GetWorkID();
 } // namespace TOFDPortExtensions
 
