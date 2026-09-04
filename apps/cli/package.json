@@ -1,0 +1,46 @@
+{
+  "name": "@yanglee2421/cli",
+  "version": "0.1.0",
+  "description": "create a vite app",
+  "keywords": [],
+  "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/yanglee2421.git",
+    "directory": "/packages/create-app"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/yanglee2421/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/yanglee2421/blob/main/README.md",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    "import": "./dist/index.mjs"
+  },
+  "bin": {
+    "cli": "dist/index.mjs"
+  },
+  "engines": {
+    "node": "^20.0.0 || >=22.0.0"
+  },
+  "scripts": {
+    "dev": "node ./dev.ts"
+  },
+  "devDependencies": {
+    "@clack/prompts": "^1.0.1",
+    "@types/ink": "^2.0.3",
+    "@types/react": "^19.2.14",
+    "p-limit": "^7.3.0"
+  },
+  "dependencies": {
+    "@yanglee2421/cpp-addon": "workspace:*",
+    "ink": "^7.0.1",
+    "react": "^19.2.5",
+    "rxjs": "^7.8.2"
+  }
+}

@@ -9,6 +9,6 @@ export default defineConfig({
   out: "./drizzle/migrations",
   dialect: "sqlite",
   dbCredentials: {
-    url: `file:${path.join(__dirname, "./data.db")}`,
+    url: `file:${path.join(__dirname, "./local.db")}`,
   },
 });

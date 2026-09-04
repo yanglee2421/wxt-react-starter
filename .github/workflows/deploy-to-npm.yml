@@ -18,18 +18,16 @@ jobs:
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v5
         with:
-          version: latest
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org/
-      - run: git submodule init
-      - run: git submodule update
-      - run: pnpm i
-      - run: pnpm build
-      - run: pnpm publish --access=public
+      - run: |
+          pnpm i
+          pnpm build
+          pnpm publish --access=public

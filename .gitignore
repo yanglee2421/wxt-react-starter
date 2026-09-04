@@ -29,4 +29,14 @@ dist
 # !.vitepress/config.ts
 docs/.vitepress/cache/**/*
 packages/serve/src/db/migrations/**/*
-data.db
+*.db
+build
+*.obj
+*.pdb
+*.exe
+*.ilk
+
+# For gitea
+apps/gitea/data/
+apps/gitea/etc/
+apps/gitea/postgres/

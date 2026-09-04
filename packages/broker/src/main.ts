@@ -1,10 +1,12 @@
-import { createDatabase, schema } from "@yanglee2421/db";
+import { defaultDbUrl, relations, schema } from "@yanglee2421/db";
 import { Aedes } from "aedes";
 import createRedisPersistence from "aedes-persistence-redis";
 import { Worker } from "bullmq";
+import { drizzle } from "drizzle-orm/node-sqlite";
 import { Redis } from "ioredis";
 import createRedisMq from "mqemitter-redis";
 import { createServer } from "node:net";
+import { DatabaseSync } from "node:sqlite";
 
 const main = async () => {
   const port = 1883;
@@ -19,7 +21,8 @@ const main = async () => {
     persistence: createRedisPersistence(),
   });
   const server = createServer(broker.handle);
-  const db = createDatabase();
+  const client = new DatabaseSync(defaultDbUrl);
+  const db = drizzle({ client, schema, relations });
   const worker = new Worker(
     BULLMQ_WORKER_NAME,
     async (job) => {
@@ -98,9 +101,7 @@ const main = async () => {
   broker.on("publish", (packet, client) => {
     if (!client) return;
 
-    console.log(
-      `[消息] 来自 ${client.id} 的主题 ${packet.topic}: ${packet.payload.toString()}`,
-    );
+    console.log(`[消息] 来自 ${client.id} 的主题 ${packet.topic}: ${packet.payload.toString()}`);
 
     db.insert(schema.sessions).values({
       userId: 1,
