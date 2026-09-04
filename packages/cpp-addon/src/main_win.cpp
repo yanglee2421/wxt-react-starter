@@ -6,7 +6,7 @@
 #include "js_util.h"
 
 Napi::Value FindWindowWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     LPCWSTR pClassName = NULL;
@@ -33,7 +33,7 @@ Napi::Value FindWindowWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value SetForegroundWindowWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     double arg_0 = info[0].As<Napi::Number>().DoubleValue();
@@ -64,7 +64,7 @@ static BOOL CALLBACK EnumChildWindowsCallbackProc(HWND hwnd, LPARAM lParam) {
 }
 
 Napi::Value EnumChildWindowsWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     double arg_0 = info[0].As<Napi::Number>().DoubleValue();
@@ -84,7 +84,7 @@ Napi::Value EnumChildWindowsWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value SendMessageWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     double args_0 = info[0].As<Napi::Number>().DoubleValue();
@@ -127,7 +127,7 @@ Napi::Value SendMessageWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value GetWindowLongPtrWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     double args1 = info[0].As<Napi::Number>().DoubleValue();
@@ -142,7 +142,7 @@ Napi::Value GetWindowLongPtrWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value TOFD_PORT_OpenDeviceWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     bool result = TOFDPort::TOFD_PORT_OpenDevice(2);
@@ -152,7 +152,7 @@ Napi::Value TOFD_PORT_OpenDeviceWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value TOFD_PORT_CloseDeviceWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     bool result = TOFDPort::TOFD_PORT_CloseDevice();
@@ -162,7 +162,7 @@ Napi::Value TOFD_PORT_CloseDeviceWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value TOFD_PORT_IsOpenWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     bool result = TOFDPort::TOFD_PORT_IsOpen();
@@ -172,7 +172,7 @@ Napi::Value TOFD_PORT_IsOpenWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value TOFD_PORT_SetFrequencyWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     int iFrequency = info[0].As<Napi::Number>().Int32Value();
@@ -183,7 +183,7 @@ Napi::Value TOFD_PORT_SetFrequencyWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_initWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     TOFDPortExtensions::ITS_init();
@@ -193,7 +193,7 @@ Napi::Value ITS_initWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_IsExistWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     bool result = TOFDPortExtensions::ITS_IsExist();
@@ -203,7 +203,7 @@ Napi::Value ITS_IsExistWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_IsOpenWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     bool result = TOFDPortExtensions::ITS_IsOpen();
@@ -213,7 +213,7 @@ Napi::Value ITS_IsOpenWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SetChWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int ch_left_s = info[0].As<Napi::Number>().Uint32Value();
@@ -228,7 +228,7 @@ Napi::Value ITS_SetChWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SetPlusWidthWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int plus_left = info[0].As<Napi::Number>().Uint32Value();
@@ -241,7 +241,7 @@ Napi::Value ITS_SetPlusWidthWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SetXmoveWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int xmove_left = info[0].As<Napi::Number>().Uint32Value();
@@ -254,7 +254,7 @@ Napi::Value ITS_SetXmoveWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SetdBWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int dB_left = info[0].As<Napi::Number>().Uint32Value();
@@ -267,7 +267,7 @@ Napi::Value ITS_SetdBWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SetDisWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int disW_left = info[0].As<Napi::Number>().Uint32Value();
@@ -280,7 +280,7 @@ Napi::Value ITS_SetDisWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SelfcheckWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int ch_left = info[0].As<Napi::Number>().Uint32Value();
@@ -293,7 +293,7 @@ Napi::Value ITS_SelfcheckWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SetZeroLeavelWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int zl_left = info[0].As<Napi::Number>().Uint32Value();
@@ -306,7 +306,7 @@ Napi::Value ITS_SetZeroLeavelWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_SetZipWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int zip_left = info[0].As<Napi::Number>().Uint32Value();
@@ -319,7 +319,7 @@ Napi::Value ITS_SetZipWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_GetEncoderWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     unsigned int ch = info[0].As<Napi::Number>().Uint32Value();
@@ -332,7 +332,7 @@ Napi::Value ITS_GetEncoderWrapped(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value ITS_StartWrapped(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   return JS::Try(env, [&]() -> Napi::Value {
     Napi::Buffer<unsigned char> buf_left =

@@ -3,6 +3,7 @@
 #include <napi.h>
 
 namespace JS {
+
 template <typename Fn>
 static Napi::Value Try(const Napi::Env& env, Fn&& func) {
   try {
@@ -17,4 +18,16 @@ static Napi::Value Try(const Napi::Env& env, Fn&& func) {
 
   return env.Null();
 }
+
+template <typename Fn, typename OnError>
+static void TryExecute(Fn&& func, OnError&& onError) {
+  try {
+    func();
+  } catch (const std::exception& ex) {
+    onError(ex.what());
+  } catch (...) {
+    onError("Unknow Cpp exception");
+  }
+}
+
 } // namespace JS

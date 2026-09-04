@@ -3,6 +3,7 @@
 #include <chrono>
 #include <memory>
 #include <thread>
+#include "js_util.h"
 
 class Interval {
  public:
@@ -98,6 +99,46 @@ Napi::Value SetInterval(const Napi::CallbackInfo& info) {
       info[1].As<Napi::Number>().Int32Value());
 
   return instance;
+}
+
+class PromiseWorker : public Napi::AsyncWorker {
+ public:
+  PromiseWorker(Napi::Env env)
+      : Napi::AsyncWorker(env), deferred(Napi::Promise::Deferred::New(env)) {}
+  Napi::Promise Promise() {
+    return deferred.Promise();
+  }
+
+ protected:
+  void Execute() override {
+    JS::TryExecute(
+        [&]() {
+          std::this_thread::sleep_for(std::chrono::seconds(2));
+          result = 42;
+        },
+        [&](const std::string& e) { SetError(e); });
+  }
+  void OnError(const Napi::Error& err) override {
+    deferred.Reject(err.Value());
+  }
+  void OnOK() override {
+    deferred.Resolve(Napi::Number::New(Env(), result));
+  }
+
+ private:
+  Napi::Promise::Deferred deferred;
+  int result;
+};
+
+Napi::Value CreatePromise(const Napi::CallbackInfo& info) {
+  auto env = info.Env();
+
+  return JS::Try(env, [&]() -> Napi::Value {
+    auto worker = new PromiseWorker(env);
+    worker->Queue();
+
+    return worker->Promise();
+  });
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
