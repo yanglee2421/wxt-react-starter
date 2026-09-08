@@ -40,6 +40,7 @@
   "dependencies": {
     "@yanglee2421/cpp-addon": "workspace:*",
     "ink": "^7.0.1",
+    "mqtt": "^5.15.2",
     "react": "^19.2.5",
     "rxjs": "^7.8.2"
   }

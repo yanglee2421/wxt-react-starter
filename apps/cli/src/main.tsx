@@ -1,8 +1,88 @@
 import addon from "@yanglee2421/cpp-addon";
 import { Box, render, Static, Text, useCursor, useInput } from "ink";
+import mqtt from "mqtt";
 import process from "node:process";
 import React from "react";
-import { fromEventPattern, merge, tap } from "rxjs";
+import { fromEventPattern, merge, switchMap, takeUntil, tap } from "rxjs";
+
+const handleMqtt = () => {
+  const client = mqtt.connect("ws://ruihuizg.cn:8083/mqtt", {
+    clientId: `location1-info-${Date.now()}`,
+    connectTimeout: 5000,
+    keepalive: 5,
+    reconnectPeriod: 3000,
+    clean: true,
+  });
+
+  const connect$ = fromEventPattern(
+    (f) => client.on("connect", f),
+    (f) => client.off("connect", f),
+  );
+  const reconnect$ = fromEventPattern(
+    (f) => client.on("reconnect", f),
+    (f) => client.off("reconnect", f),
+  );
+  const message$ = fromEventPattern<[string, Buffer]>(
+    (f) => client.on("message", f),
+    (f) => client.off("message", f),
+  );
+  const error$ = fromEventPattern(
+    (f) => client.on("error", f),
+    (f) => client.off("error", f),
+  );
+  const offline$ = fromEventPattern(
+    (f) => client.on("offline", f),
+    (f) => client.off("offline", f),
+  );
+  const close$ = fromEventPattern(
+    (f) => client.on("close", f),
+    (f) => client.off("close", f),
+  );
+  const device_up$ = fromEventPattern<[unknown]>(
+    (f) => client.subscribe("device/up", f),
+    (f) => client.unsubscribe("device/up", f),
+  );
+
+  return connect$
+    .pipe(
+      switchMap(() => {
+        return merge(
+          device_up$.pipe(
+            tap(([err]) => {
+              if (err) {
+                console.error("[MQTT] 订阅 device/up 失败", err);
+
+                return;
+              }
+              console.log("[MQTT] 已订阅主题 device/up");
+            }),
+          ),
+          reconnect$.pipe(
+            tap(() => {
+              console.log("reconnect");
+            }),
+          ),
+          message$.pipe(
+            tap(([, payload]) => {
+              console.log(payload.toString());
+            }),
+          ),
+          error$.pipe(
+            tap(() => {
+              console.log("error");
+            }),
+          ),
+          offline$.pipe(
+            tap(() => {
+              console.log("offline");
+            }),
+          ),
+        );
+      }),
+    )
+    .pipe(takeUntil(merge(close$, sigterm$, exit$, sigint$)))
+    .subscribe();
+};
 
 const exit$ = fromEventPattern(
   (f) => process.on("exit", f),
@@ -59,7 +139,7 @@ const Counter = () => {
     if (key.backspace) {
       setInput((prev) => {
         const val = prev.slice(0, -1);
-        cursor.setCursorPosition({ x: val.length, y: 2 });
+        cursor.setCursorPosition({ x: val.length, y: 0 });
         return val;
       });
       return;
@@ -69,6 +149,9 @@ const Counter = () => {
       switch (inputText) {
         case "1":
           handleMain();
+          break;
+        case "2":
+          handleMqtt();
           break;
         default:
           setItems((prev) => [...prev, inputText]);
@@ -82,24 +165,13 @@ const Counter = () => {
 
     setInput((prev) => {
       const val = prev + input;
-      cursor.setCursorPosition({ x: val.length, y: 2 });
+      cursor.setCursorPosition({ x: val.length, y: 0 });
       return val;
     });
   });
 
-  React.useEffect(() => {
-    const result = addon.TOFD_PORT_OpenDevice();
-    console.log("TOFD_PORT_OpenDevice result:", result);
-
-    return () => {
-      const result = addon.TOFD_PORT_CloseDevice();
-      console.log("TOFD_PORT_CloseDevice result:", result);
-    };
-  }, []);
-
   return (
     <>
-      <Text>App Start</Text>
       <Static items={items}>
         {(item, index) => (
           <Box key={index}>
@@ -108,8 +180,6 @@ const Counter = () => {
           </Box>
         )}
       </Static>
-      <Text color="cyan">Length: {inputText.length}</Text>
-      <Text color="green">Passed: {items.length}</Text>
       <Text color="red">{inputText}</Text>
     </>
   );
