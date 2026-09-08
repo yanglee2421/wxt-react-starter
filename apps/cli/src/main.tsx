@@ -3,84 +3,104 @@ import { Box, render, Static, Text, useCursor, useInput } from "ink";
 import mqtt from "mqtt";
 import process from "node:process";
 import React from "react";
-import { fromEventPattern, merge, switchMap, takeUntil, tap } from "rxjs";
+import {
+  defer,
+  fromEventPattern,
+  merge,
+  retry,
+  switchMap,
+  takeUntil,
+  tap,
+  throwError,
+  timer,
+} from "rxjs";
 
 const handleMqtt = () => {
-  const client = mqtt.connect("ws://ruihuizg.cn:8083/mqtt", {
-    clientId: `location1-info-${Date.now()}`,
-    connectTimeout: 5000,
-    keepalive: 5,
-    reconnectPeriod: 3000,
-    clean: true,
-  });
+  return defer(() => {
+    console.log("defer");
 
-  const connect$ = fromEventPattern(
-    (f) => client.on("connect", f),
-    (f) => client.off("connect", f),
-  );
-  const reconnect$ = fromEventPattern(
-    (f) => client.on("reconnect", f),
-    (f) => client.off("reconnect", f),
-  );
-  const message$ = fromEventPattern<[string, Buffer]>(
-    (f) => client.on("message", f),
-    (f) => client.off("message", f),
-  );
-  const error$ = fromEventPattern(
-    (f) => client.on("error", f),
-    (f) => client.off("error", f),
-  );
-  const offline$ = fromEventPattern(
-    (f) => client.on("offline", f),
-    (f) => client.off("offline", f),
-  );
-  const close$ = fromEventPattern(
-    (f) => client.on("close", f),
-    (f) => client.off("close", f),
-  );
-  const device_up$ = fromEventPattern<[unknown]>(
-    (f) => client.subscribe("device/up", f),
-    (f) => client.unsubscribe("device/up", f),
-  );
+    const client = mqtt.connect("ws://ruihuizg.cn:8083/mqtt", {
+      clientId: `location1-info-${Date.now()}`,
+      connectTimeout: 5000,
+      keepalive: 5,
+      reconnectPeriod: 3000,
+      clean: true,
+    });
 
-  return connect$
-    .pipe(
-      switchMap(() => {
-        return merge(
-          device_up$.pipe(
-            tap(([err]) => {
-              if (err) {
-                console.error("[MQTT] 订阅 device/up 失败", err);
-
-                return;
-              }
-              console.log("[MQTT] 已订阅主题 device/up");
-            }),
-          ),
-          reconnect$.pipe(
-            tap(() => {
-              console.log("reconnect");
-            }),
-          ),
-          message$.pipe(
-            tap(([, payload]) => {
-              console.log(payload.toString());
-            }),
-          ),
-          error$.pipe(
-            tap(() => {
-              console.log("error");
-            }),
-          ),
-          offline$.pipe(
-            tap(() => {
-              console.log("offline");
-            }),
-          ),
-        );
+    const connect$ = fromEventPattern<never>(
+      (f) => client.on("connect", f),
+      (f) => client.off("connect", f),
+    );
+    const reconnect$ = fromEventPattern(
+      (f) => client.on("reconnect", f),
+      (f) => client.off("reconnect", f),
+    ).pipe(
+      tap(() => {
+        console.log("reconnect");
       }),
+    );
+    const message$ = fromEventPattern<[string, Buffer]>(
+      (f) => client.on("message", f),
+      (f) => client.off("message", f),
+    );
+    const error$ = fromEventPattern(
+      (f) => client.on("error", f),
+      (f) => client.off("error", f),
+    ).pipe(
+      tap(() => {
+        console.log("error");
+      }),
+    );
+    const offline$ = fromEventPattern(
+      (f) => client.on("offline", f),
+      (f) => client.off("offline", f),
+    ).pipe(
+      tap(() => {
+        console.log("offline");
+      }),
+    );
+    const close$ = fromEventPattern(
+      (f) => client.on("close", f),
+      (f) => client.off("close", f),
+    ).pipe(
+      tap(() => {
+        console.log("close");
+      }),
+    );
+    const device_up$ = fromEventPattern<[unknown]>(
+      (f) => client.subscribe("device/up", f),
+      (f) => client.unsubscribe("device/up", f),
+    );
+
+    return merge(
+      connect$.pipe(
+        switchMap(() => device_up$),
+        tap(([err]) => {
+          if (err) {
+            console.error("[MQTT] 订阅 device/up 失败", err);
+
+            return;
+          }
+          console.log("[MQTT] 已订阅主题 device/up");
+        }),
+        switchMap(() => message$),
+        tap(([, payload]) => {
+          console.log(payload.toString());
+        }),
+      ),
+      reconnect$,
+      error$.pipe(switchMap(() => throwError(() => new Error("error")))),
+      offline$.pipe(switchMap(() => throwError(() => new Error("offline")))),
+    ).pipe(takeUntil(close$));
+  })
+    .pipe(
+      retry({
+        count: Infinity,
+        resetOnSuccess: true,
+        delay: () => timer(1000 * 2),
+      }),
+      takeUntil(merge(sigterm$, exit$, sigint$)),
     )
-    .pipe(takeUntil(merge(close$, sigterm$, exit$, sigint$)))
     .subscribe();
 };
 
