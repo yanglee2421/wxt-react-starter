@@ -60,9 +60,15 @@ const Counter = () => {
           break;
         case "2":
           ref.current = handleMqtt();
+          setItems((prev) => [...prev, inputText]);
+          setInput("");
+          cursor.setCursorPosition(void 0);
           break;
         case "3":
           ref.current?.dispose();
+          setItems((prev) => [...prev, inputText]);
+          setInput("");
+          cursor.setCursorPosition(void 0);
           break;
         default:
           setItems((prev) => [...prev, inputText]);

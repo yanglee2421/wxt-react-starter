@@ -58,9 +58,6 @@ const watch$ = new Observable((sub) => {
     },
     external: (id, parentId, isResolved) => {
       void parentId;
-      // console.log(id);
-      // console.log(parentId);
-      // console.log(isResolved);
 
       if (isResolved) {
         return id.includes("node_modules");

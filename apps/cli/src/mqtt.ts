@@ -1,6 +1,7 @@
 import mqtt from "mqtt";
 import type { Subscription } from "rxjs";
 import {
+  BehaviorSubject,
   combineLatest,
   EMPTY,
   fromEventPattern,
@@ -8,7 +9,6 @@ import {
   merge,
   Observable,
   retry,
-  Subject,
   switchMap,
   takeUntil,
   tap,
@@ -17,8 +17,8 @@ import {
 } from "rxjs";
 
 export class MqttDemo {
-  readonly mqttURI$ = new Subject<string>();
-  readonly deviceId$ = new Subject<string>();
+  readonly mqttURI$ = new BehaviorSubject<string>("");
+  readonly deviceId$ = new BehaviorSubject<string>("");
   private subscription: Subscription;
 
   constructor() {
@@ -114,8 +114,8 @@ const createError = (client: mqtt.MqttClient) => {
     (f) => client.on("error", f),
     (f) => client.off("error", f),
   ).pipe(
-    tap(() => {
-      console.log("error");
+    tap((error) => {
+      console.error(error);
     }),
   );
 
