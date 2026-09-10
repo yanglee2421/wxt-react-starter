@@ -1,129 +1,15 @@
 import addon from "@yanglee2421/cpp-addon";
 import { Box, render, Static, Text, useCursor, useInput } from "ink";
-import mqtt from "mqtt";
-import process from "node:process";
 import React from "react";
-import {
-  defer,
-  fromEventPattern,
-  merge,
-  retry,
-  switchMap,
-  takeUntil,
-  tap,
-  throwError,
-  timer,
-} from "rxjs";
+import { MqttDemo } from "./mqtt";
 
 const handleMqtt = () => {
-  return defer(() => {
-    console.log("defer");
+  const demo = new MqttDemo();
+  demo.mqttURI$.next("ws://ruihuizg.cn:8083/mqtt");
+  demo.deviceId$.next("26");
 
-    const client = mqtt.connect("ws://ruihuizg.cn:8083/mqtt", {
-      clientId: `location1-info-${Date.now()}`,
-      connectTimeout: 5000,
-      keepalive: 5,
-      reconnectPeriod: 3000,
-      clean: true,
-    });
-
-    const connect$ = fromEventPattern<never>(
-      (f) => client.on("connect", f),
-      (f) => client.off("connect", f),
-    );
-    const reconnect$ = fromEventPattern(
-      (f) => client.on("reconnect", f),
-      (f) => client.off("reconnect", f),
-    ).pipe(
-      tap(() => {
-        console.log("reconnect");
-      }),
-    );
-    const message$ = fromEventPattern<[string, Buffer]>(
-      (f) => client.on("message", f),
-      (f) => client.off("message", f),
-    );
-    const error$ = fromEventPattern(
-      (f) => client.on("error", f),
-      (f) => client.off("error", f),
-    ).pipe(
-      tap(() => {
-        console.log("error");
-      }),
-    );
-    const offline$ = fromEventPattern(
-      (f) => client.on("offline", f),
-      (f) => client.off("offline", f),
-    ).pipe(
-      tap(() => {
-        console.log("offline");
-      }),
-    );
-    const close$ = fromEventPattern(
-      (f) => client.on("close", f),
-      (f) => client.off("close", f),
-    ).pipe(
-      tap(() => {
-        console.log("close");
-      }),
-    );
-    const device_up$ = fromEventPattern<[unknown]>(
-      (f) => client.subscribe("device/up", f),
-      (f) => client.unsubscribe("device/up", f),
-    );
-
-    return merge(
-      connect$.pipe(
-        switchMap(() => device_up$),
-        tap(([err]) => {
-          if (err) {
-            console.error("[MQTT] 订阅 device/up 失败", err);
-
-            return;
-          }
-          console.log("[MQTT] 已订阅主题 device/up");
-        }),
-        switchMap(() => message$),
-        tap(([, payload]) => {
-          console.log(payload.toString());
-        }),
-      ),
-      reconnect$,
-      error$.pipe(switchMap(() => throwError(() => new Error("error")))),
-      offline$.pipe(switchMap(() => throwError(() => new Error("offline")))),
-    ).pipe(takeUntil(close$));
-  })
-    .pipe(
-      retry({
-        count: Infinity,
-        resetOnSuccess: true,
-        delay: () => timer(1000 * 2),
-      }),
-      takeUntil(merge(sigterm$, exit$, sigint$)),
-    )
-    .subscribe();
+  return demo;
 };
-
-const exit$ = fromEventPattern(
-  (f) => process.on("exit", f),
-  (f) => process.off("exit", f),
-);
-const sigint$ = fromEventPattern(
-  (f) => process.on("SIGINT", f),
-  (f) => process.off("SIGINT", f),
-).pipe(
-  tap(() => {
-    process.exit();
-  }),
-);
-const sigterm$ = fromEventPattern(
-  (f) => process.on("SIGTERM", f),
-  (f) => process.off("SIGTERM", f),
-).pipe(
-  tap(() => {
-    process.exit();
-  }),
-);
 
 const handleMain = () => {
   addon.ITS_init();
@@ -153,6 +39,8 @@ const Counter = () => {
   const [inputText, setInput] = React.useState("");
   const [items, setItems] = React.useState<string[]>([]);
 
+  const ref = React.useRef<MqttDemo | null>(null);
+
   const cursor = useCursor();
 
   useInput((input, key) => {
@@ -171,7 +59,10 @@ const Counter = () => {
           handleMain();
           break;
         case "2":
-          handleMqtt();
+          ref.current = handleMqtt();
+          break;
+        case "3":
+          ref.current?.dispose();
           break;
         default:
           setItems((prev) => [...prev, inputText]);
@@ -206,8 +97,6 @@ const Counter = () => {
 };
 
 export const main = () => {
-  merge(exit$, sigterm$, sigint$).subscribe();
-
   return render(<Counter />);
 };
 

@@ -29,7 +29,7 @@
     "node": "^20.0.0 || >=22.0.0"
   },
   "scripts": {
-    "dev": "node ./dev.ts"
+    "dev": "node ./src/dev.ts"
   },
   "devDependencies": {
     "@clack/prompts": "^1.0.1",
