@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { fork } from "node:child_process";
 import path from "node:path";
 import url from "node:url";
 import { watch } from "rolldown";
@@ -11,7 +11,7 @@ const shimFile = path.resolve(__dirname, "esm-shims.ts");
 
 const node$ = new Observable((sub) => {
   const jsPath = path.resolve(__dirname, "../dist/index.mjs");
-  const ps = spawn("node", [jsPath], {
+  const ps = fork(jsPath, {
     stdio: "inherit",
   });
 
