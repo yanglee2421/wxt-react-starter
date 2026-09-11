@@ -5,6 +5,7 @@ import {
   combineLatest,
   EMPTY,
   fromEventPattern,
+  ignoreElements,
   map,
   merge,
   Observable,
@@ -35,19 +36,52 @@ export class MqttDemo {
 
           return createMqtt(mqttURI).pipe(
             switchMap((client) => {
+              const connect$ = fromEventPattern(
+                (f) => client.on("connect", f),
+                (f) => client.off("connect", f),
+              );
+              const error$ = fromEventPattern(
+                (f) => client.on("error", f),
+                (f) => client.off("error", f),
+              );
+              const close$ = fromEventPattern(
+                (f) => client.on("close", f),
+                (f) => client.off("close", f),
+              );
+              const device_up$ = fromEventPattern<[unknown]>(
+                (f) => client.subscribe("device/up", f),
+                (f) => client.unsubscribe("device/up", f),
+              );
+              const message$ = fromEventPattern<[string, Buffer]>(
+                (f) => client.on("message", f),
+                (f) => client.off("message", f),
+              );
+              const reconnect$ = fromEventPattern(
+                (f) => client.on("reconnect", f),
+                (f) => client.off("reconnect", f),
+              );
+              const offline$ = fromEventPattern(
+                (f) => client.on("offline", f),
+                (f) => client.off("offline", f),
+              );
+
               return merge(
-                createConnect(client).pipe(
-                  switchMap(() => createDeviceUp(client)),
+                connect$.pipe(
+                  switchMap(() => device_up$),
                   tap(([err]) => {
                     console.log("[MQTT] 已订阅主题 device/up", err);
+
+                    if (err) {
+                      throw err;
+                    }
                   }),
-                  switchMap(() => createMessage(client)),
+                  switchMap(() => message$),
                   map(([, payload]) => payload.toString()),
                 ),
-                createReconnect(client),
-                createError(client).pipe(switchMap(() => throwError(() => new Error("error")))),
-                createOffline(client).pipe(switchMap(() => throwError(() => new Error("offline")))),
-              ).pipe(takeUntil(createClose(client)));
+                reconnect$.pipe(ignoreElements()),
+                error$.pipe(switchMap(() => throwError(() => new Error("error")))),
+                offline$.pipe(switchMap(() => throwError(() => new Error("offline")))),
+              ).pipe(takeUntil(close$));
             }),
           );
         }),
@@ -73,83 +107,11 @@ const createMqtt = (mqttURI: string) => {
       reconnectPeriod: 3000,
       clean: true,
     });
+
     sub.next(client);
 
     return () => {
       client.end();
     };
   });
-};
-
-const createConnect = (client: mqtt.MqttClient) => {
-  const connect$ = fromEventPattern<never>(
-    (f) => client.on("connect", f),
-    (f) => client.off("connect", f),
-  );
-
-  return connect$;
-};
-const createReconnect = (client: mqtt.MqttClient) => {
-  const reconnect$ = fromEventPattern(
-    (f) => client.on("reconnect", f),
-    (f) => client.off("reconnect", f),
-  ).pipe(
-    tap(() => {
-      console.log("reconnect");
-    }),
-  );
-
-  return reconnect$;
-};
-const createMessage = (client: mqtt.MqttClient) => {
-  const message$ = fromEventPattern<[string, Buffer]>(
-    (f) => client.on("message", f),
-    (f) => client.off("message", f),
-  );
-
-  return message$;
-};
-const createError = (client: mqtt.MqttClient) => {
-  const error$ = fromEventPattern(
-    (f) => client.on("error", f),
-    (f) => client.off("error", f),
-  ).pipe(
-    tap((error) => {
-      console.error(error);
-    }),
-  );
-
-  return error$;
-};
-const createOffline = (client: mqtt.MqttClient) => {
-  const offline$ = fromEventPattern(
-    (f) => client.on("offline", f),
-    (f) => client.off("offline", f),
-  ).pipe(
-    tap(() => {
-      console.log("offline");
-    }),
-  );
-
-  return offline$;
-};
-const createClose = (client: mqtt.MqttClient) => {
-  const close$ = fromEventPattern(
-    (f) => client.on("close", f),
-    (f) => client.off("close", f),
-  ).pipe(
-    tap(() => {
-      console.log("close");
-    }),
-  );
-
-  return close$;
-};
-const createDeviceUp = (client: mqtt.MqttClient) => {
-  const device_up$ = fromEventPattern<[unknown]>(
-    (f) => client.subscribe("device/up", f),
-    (f) => client.unsubscribe("device/up", f),
-  );
-
-  return device_up$;
 };
