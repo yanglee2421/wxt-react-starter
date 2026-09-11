@@ -47,7 +47,7 @@ const Counter = () => {
     if (key.backspace) {
       setInput((prev) => {
         const val = prev.slice(0, -1);
-        cursor.setCursorPosition({ x: val.length, y: 0 });
+        cursor.setCursorPosition({ x: val.length, y: 1 });
         return val;
       });
       return;
@@ -55,34 +55,32 @@ const Counter = () => {
 
     if (key.return) {
       switch (inputText) {
-        case "1":
+        case "yl":
           handleMain();
           break;
-        case "2":
+        case "mqtt":
           ref.current = handleMqtt();
-          setItems((prev) => [...prev, inputText]);
-          setInput("");
-          cursor.setCursorPosition(void 0);
           break;
-        case "3":
+        case "mqtte":
           ref.current?.dispose();
-          setItems((prev) => [...prev, inputText]);
-          setInput("");
-          cursor.setCursorPosition(void 0);
+          break;
+        case "exit":
+          process.exit();
           break;
         default:
-          setItems((prev) => [...prev, inputText]);
-          setInput("");
-          cursor.setCursorPosition(void 0);
           break;
       }
+
+      setItems((prev) => [...prev, inputText]);
+      setInput("");
+      cursor.setCursorPosition(void 0);
 
       return;
     }
 
     setInput((prev) => {
       const val = prev + input;
-      cursor.setCursorPosition({ x: val.length, y: 0 });
+      cursor.setCursorPosition({ x: val.length, y: 1 });
       return val;
     });
   });
@@ -97,6 +95,7 @@ const Counter = () => {
           </Box>
         )}
       </Static>
+      <Text>Command Start</Text>
       <Text color="red">{inputText}</Text>
     </>
   );
@@ -106,4 +105,4 @@ export const main = () => {
   return render(<Counter />);
 };
 
-main();
+void main();

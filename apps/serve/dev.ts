@@ -1,52 +1,55 @@
 import { fork } from "node:child_process";
 import path from "node:path";
 import url from "node:url";
-import { watch, type WatchOptions } from "rolldown";
-import { catchError, EMPTY, last, Observable, share, switchMap, takeUntil } from "rxjs";
+import type { RolldownWatcher, WatchOptions } from "rolldown";
+import { watch } from "rolldown";
+import { catchError, EMPTY, Observable, switchMap, tap } from "rxjs";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const shimFile = path.resolve(__dirname, "esm-shims.ts");
 
-const node$ = new Observable((sub) => {
-  const jsPath = path.resolve(__dirname, "./dist/serve.mjs");
-  const ps = fork(jsPath, {
-    stdio: "pipe",
-  });
+const startNode = (watcher: RolldownWatcher) => {
+  return new Observable((sub) => {
+    const jsPath = path.resolve(__dirname, "./dist/serve.mjs");
+    const ps = fork(jsPath, { stdio: "pipe" });
 
-  ps.on("error", (error) => {
-    sub.error(error);
-  });
-  ps.on("spawn", () => {
-    sub.next(ps);
-  });
-  ps.on("close", () => {
-    sub.complete();
-  });
+    ps.on("spawn", () => {
+      sub.next(ps);
+    });
+    ps.on("error", (error) => {
+      sub.error(error);
+    });
+    ps.on("close", () => {
+      sub.complete();
+    });
 
-  ps.stdout?.addListener("data", (data) => {
-    const msg = String(data);
-    console.log(msg);
-  });
-  ps.stderr?.addListener("data", (data) => {
-    const msg = String(data);
-    console.log(msg);
-  });
+    ps.stdout?.addListener("data", (data) => {
+      console.log(String(data).trim());
+    });
+    ps.stderr?.addListener("data", (data) => {
+      console.error(String(data).trim());
+    });
 
-  return () => {
-    ps.stdout?.removeAllListeners();
-    ps.stderr?.removeAllListeners();
-    ps.removeAllListeners();
-    ps.kill("SIGHUP");
-  };
-}).pipe(
-  share(),
-  catchError((error) => {
-    console.error(error);
+    return () => {
+      ps.stdout?.removeAllListeners();
+      ps.stderr?.removeAllListeners();
+      ps.removeAllListeners();
+      ps.kill("SIGHUP");
+    };
+  }).pipe(
+    tap({
+      complete() {
+        watcher.close();
+      },
+    }),
+    catchError((error) => {
+      console.error(error);
 
-    return EMPTY;
-  }),
-);
+      return EMPTY;
+    }),
+  );
+};
 
 const watchOptions = (): WatchOptions => {
   return {
@@ -86,7 +89,7 @@ const watchOptions = (): WatchOptions => {
   };
 };
 
-const watch$ = new Observable((sub) => {
+const watch$ = new Observable<RolldownWatcher>((sub) => {
   const watcher = watch(watchOptions());
 
   watcher.on("event", (e) => {
@@ -95,7 +98,7 @@ const watch$ = new Observable((sub) => {
         console.error(e.error);
         break;
       case "BUNDLE_END":
-        sub.next(null);
+        sub.next(watcher);
         break;
       default:
     }
@@ -107,8 +110,5 @@ const watch$ = new Observable((sub) => {
   };
 });
 
-const dev$ = watch$.pipe(
-  switchMap(() => node$),
-  takeUntil(node$.pipe(last())),
-);
+const dev$ = watch$.pipe(switchMap((watcher) => startNode(watcher)));
 dev$.subscribe();
