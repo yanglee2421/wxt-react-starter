@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { fork } from "node:child_process";
 import path from "node:path";
 import url from "node:url";
 import { watch, type WatchOptions } from "rolldown";
@@ -10,8 +10,8 @@ const shimFile = path.resolve(__dirname, "esm-shims.ts");
 
 const node$ = new Observable((sub) => {
   const jsPath = path.resolve(__dirname, "./dist/serve.mjs");
-  const ps = spawn("node", [jsPath], {
-    stdio: "inherit",
+  const ps = fork(jsPath, {
+    stdio: "pipe",
   });
 
   ps.on("error", (error) => {
@@ -24,7 +24,18 @@ const node$ = new Observable((sub) => {
     sub.complete();
   });
 
+  ps.stdout?.addListener("data", (data) => {
+    const msg = String(data);
+    console.log(msg);
+  });
+  ps.stderr?.addListener("data", (data) => {
+    const msg = String(data);
+    console.log(msg);
+  });
+
   return () => {
+    ps.stdout?.removeAllListeners();
+    ps.stderr?.removeAllListeners();
     ps.removeAllListeners();
     ps.kill("SIGHUP");
   };

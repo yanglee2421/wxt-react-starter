@@ -3,7 +3,7 @@ import path from "node:path";
 import url from "node:url";
 import type { WatchOptions } from "rolldown";
 import { watch } from "rolldown";
-import { catchError, EMPTY, Observable, switchMap, tap } from "rxjs";
+import { catchError, EMPTY, last, Observable, share, switchMap, takeUntil } from "rxjs";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,11 +30,7 @@ const node$ = new Observable((sub) => {
     ps.kill("SIGHUP");
   };
 }).pipe(
-  tap({
-    complete() {
-      process.exit();
-    },
-  }),
+  share(),
   catchError((error) => {
     console.error(error);
     return EMPTY;
@@ -101,6 +97,9 @@ const watch$ = new Observable((sub) => {
   };
 });
 
-const dev$ = watch$.pipe(switchMap(() => node$));
+const dev$ = watch$.pipe(
+  switchMap(() => node$),
+  takeUntil(node$.pipe(last())),
+);
 
 dev$.subscribe();
