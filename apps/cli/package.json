@@ -35,13 +35,20 @@
     "@clack/prompts": "^1.0.1",
     "@types/ink": "^2.0.3",
     "@types/react": "^19.2.14",
+    "@types/ws": "^8.18.1",
     "p-limit": "^7.3.0"
   },
   "dependencies": {
     "@yanglee2421/cpp-addon": "workspace:*",
+    "@yanglee2421/db": "workspace:*",
+    "aedes": "^1.1.2",
+    "basic-ftp": "^6.0.1",
+    "drizzle-orm": "1.0.0-beta.22",
     "ink": "^7.0.1",
     "mqtt": "^5.15.2",
     "react": "^19.2.5",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "serialport": "^13.0.0",
+    "ws": "^8.21.3"
   }
 }
