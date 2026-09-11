@@ -1,9 +1,9 @@
 import { fork } from "node:child_process";
 import path from "node:path";
 import url from "node:url";
+import type { WatchOptions } from "rolldown";
 import { watch } from "rolldown";
-import { catchError, EMPTY, Observable, switchMap, takeUntil, tap } from "rxjs";
-import { processExit$ } from "./process.ts";
+import { catchError, EMPTY, Observable, switchMap, tap } from "rxjs";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,19 +30,19 @@ const node$ = new Observable((sub) => {
     ps.kill("SIGHUP");
   };
 }).pipe(
-  catchError((error) => {
-    console.error(error);
-    return EMPTY;
-  }),
   tap({
     complete() {
       process.exit();
     },
   }),
+  catchError((error) => {
+    console.error(error);
+    return EMPTY;
+  }),
 );
 
-const watch$ = new Observable((sub) => {
-  const watcher = watch({
+const watchOptions = (): WatchOptions => {
+  return {
     // Input
     input: "./src/main.tsx",
     output: {
@@ -77,7 +77,11 @@ const watch$ = new Observable((sub) => {
         return true;
       }
     },
-  });
+  };
+};
+
+const watch$ = new Observable((sub) => {
+  const watcher = watch(watchOptions());
 
   watcher.on("event", (e) => {
     switch (e.code) {
@@ -97,9 +101,6 @@ const watch$ = new Observable((sub) => {
   };
 });
 
-const dev$ = watch$.pipe(
-  switchMap(() => node$),
-  takeUntil(processExit$),
-);
+const dev$ = watch$.pipe(switchMap(() => node$));
 
 dev$.subscribe();

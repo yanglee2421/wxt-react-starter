@@ -1,42 +1,13 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
 import url from "node:url";
-import { watch } from "rolldown";
-import {
-  catchError,
-  EMPTY,
-  fromEventPattern,
-  merge,
-  Observable,
-  switchMap,
-  takeUntil,
-  tap,
-} from "rxjs";
+import { watch, type WatchOptions } from "rolldown";
+import { catchError, EMPTY, last, Observable, share, switchMap, takeUntil } from "rxjs";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const shimFile = path.resolve(__dirname, "esm-shims.ts");
 
-const exit$ = fromEventPattern(
-  (f) => process.on("exit", f),
-  (f) => process.off("exit", f),
-);
-const sigint$ = fromEventPattern(
-  (f) => process.on("SIGINT", f),
-  (f) => process.off("SIGINT", f),
-).pipe(
-  tap(() => {
-    process.exit();
-  }),
-);
-const sigterm$ = fromEventPattern(
-  (f) => process.on("SIGTERM", f),
-  (f) => process.off("SIGTERM", f),
-).pipe(
-  tap(() => {
-    process.exit();
-  }),
-);
 const node$ = new Observable((sub) => {
   const jsPath = path.resolve(__dirname, "./dist/serve.mjs");
   const ps = spawn("node", [jsPath], {
@@ -51,7 +22,6 @@ const node$ = new Observable((sub) => {
   });
   ps.on("close", () => {
     sub.complete();
-    process.exit();
   });
 
   return () => {
@@ -59,6 +29,7 @@ const node$ = new Observable((sub) => {
     ps.kill("SIGHUP");
   };
 }).pipe(
+  share(),
   catchError((error) => {
     console.error(error);
 
@@ -66,9 +37,8 @@ const node$ = new Observable((sub) => {
   }),
 );
 
-const watch$ = new Observable((sub) => {
-  const watcher = watch({
-    // Input
+const watchOptions = (): WatchOptions => {
+  return {
     input: "./src/serve.ts",
     output: {
       file: "./dist/serve.mjs",
@@ -83,9 +53,6 @@ const watch$ = new Observable((sub) => {
     },
     external: (id, parentId, isResolved) => {
       void parentId;
-      // console.log(id);
-      // console.log(parentId);
-      // console.log(isResolved);
 
       if (isResolved) {
         return id.includes("node_modules");
@@ -105,7 +72,11 @@ const watch$ = new Observable((sub) => {
         return true;
       }
     },
-  });
+  };
+};
+
+const watch$ = new Observable((sub) => {
+  const watcher = watch(watchOptions());
 
   watcher.on("event", (e) => {
     switch (e.code) {
@@ -127,13 +98,6 @@ const watch$ = new Observable((sub) => {
 
 const dev$ = watch$.pipe(
   switchMap(() => node$),
-  takeUntil(
-    merge(exit$, sigint$, sigterm$).pipe(
-      tap(() => {
-        console.log("process exit");
-      }),
-    ),
-  ),
+  takeUntil(node$.pipe(last())),
 );
-
 dev$.subscribe();
