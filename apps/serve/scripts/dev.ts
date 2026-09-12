@@ -11,7 +11,7 @@ const shimFile = path.resolve(__dirname, "esm-shims.ts");
 
 const startNode = (watcher: RolldownWatcher) => {
   return new Observable((sub) => {
-    const jsPath = path.resolve(__dirname, "./dist/serve.mjs");
+    const jsPath = path.resolve(__dirname, "../dist/serve.mjs");
     const ps = fork(jsPath, { stdio: "pipe" });
 
     ps.on("spawn", () => {
