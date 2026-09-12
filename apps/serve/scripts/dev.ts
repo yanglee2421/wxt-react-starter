@@ -68,9 +68,7 @@ const watchOptions = (): WatchOptions => {
     external: (id, parentId, isResolved) => {
       void parentId;
 
-      if (isResolved) {
-        return id.includes("node_modules");
-      } else {
+      if (!isResolved) {
         if (id.startsWith(".")) {
           return false;
         }
@@ -79,11 +77,9 @@ const watchOptions = (): WatchOptions => {
           return false;
         }
 
-        if (id.startsWith("/")) {
-          return false;
-        }
-
         return true;
+      } else {
+        return id.includes("node_modules");
       }
     },
   };

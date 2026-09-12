@@ -29,10 +29,9 @@
     "node": "^20.0.0 || >=22.0.0"
   },
   "scripts": {
-    "dev": "node ./src/dev.ts"
+    "dev": "node ./scripts/dev.ts"
   },
   "devDependencies": {
-    "@clack/prompts": "^1.0.1",
     "@types/ink": "^2.0.3",
     "@types/react": "^19.2.14",
     "@types/ws": "^8.18.1",
